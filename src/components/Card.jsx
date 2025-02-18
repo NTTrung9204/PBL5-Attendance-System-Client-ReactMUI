@@ -10,7 +10,7 @@ import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import IconButton from '@mui/material/IconButton';
 
-function Card() {
+function Card({groupTeamName}) {
 
     const menuItemsList = [
         {
@@ -22,8 +22,6 @@ function Card() {
             onClick: () => console.log("Back")
         },
     ]
-
-    const groupTeamName = "Hello my name is trung, good morning, how are you today?"
 
 
     return (
