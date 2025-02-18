@@ -1,13 +1,17 @@
 import React from 'react';
 import Card from '../components/Card';
+import { Box } from '@mui/material';
 
 function GroupsPage() {
   return (
-    <div>
-      <h1>Groups Page</h1>
-      <p>Welcome to the Groups page!</p>
+    <Box
+      sx={{display: "flex", flexWrap: "wrap", gap: "20px"}}
+    >
       <Card ></Card>
-    </div>
+      <Card ></Card>
+      <Card ></Card>
+      <Card ></Card>
+    </Box>
   );
 }
 

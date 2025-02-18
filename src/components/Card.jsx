@@ -3,18 +3,14 @@ import Avatar from '@mui/material/Avatar';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { memo } from "react";
 import MenuButton from "./MenuButton";
-
+import Tooltip from '@mui/material/Tooltip';
+import { stringAvatar } from "../utils/helper"
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+import SquareFootIcon from '@mui/icons-material/SquareFoot';
+import IconButton from '@mui/material/IconButton';
 
 function Card() {
-
-    const CardDropDown = memo(() => {
-
-        return (
-            <>
-
-            </>
-        )
-    })
 
     const menuItemsList = [
         {
@@ -27,17 +23,20 @@ function Card() {
         },
     ]
 
+    const groupTeamName = "Hello my name is trung, good morning, how are you today?"
+
 
     return (
         <>
-
             <Box sx={{
                 padding: "10px",
                 display: "flex",
                 flexDirection: "column",
-                width: "300px",
+                width: "350px",
                 height: "auto",
-                backgroundColor: "#ccc"
+                backgroundColor: "#ccc",
+                borderRadius: "3px",
+                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2);"
             }}>
                 <Box
                     sx={{
@@ -48,13 +47,56 @@ function Card() {
                         width: "100%"
                     }}
                 >
-                    <Avatar sx={{}}>N</Avatar>
-                    <span style={{ width: "100%" }}>Hello Hello Hello Hello Hello Hello Hello Hello Hello</span>
+                    <Avatar variant="rounded" style={{ width: 72, height: 72 }} {...stringAvatar(groupTeamName)} />
+                    <Tooltip title={groupTeamName} arrow>
+                        <span style={{
+                            display: "-webkit-box",
+                            WebkitLineClamp: "2",
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis"
+                        }}>
+                            {groupTeamName}
+                        </span>
+                    </Tooltip>
                     <MenuButton
                         menuItem={menuItemsList}
                     />
                 </Box>
-                <Box> </Box>
+                <Box
+                    sx={{marginTop: "10px"}}
+                >
+                    <Tooltip title="Announcements">
+                        <IconButton>
+                            <NotificationsActiveIcon
+                                sx={{
+                                    '&:hover': {
+                                        fill: '#1976d2', 
+                                    },
+                                }} />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Assignments">
+                        <IconButton>
+                            <BusinessCenterIcon
+                                sx={{
+                                    '&:hover': {
+                                        fill: '#1976d2', 
+                                    },
+                                }} />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Class work">
+                        <IconButton>
+                            <SquareFootIcon
+                                sx={{
+                                    '&:hover': {
+                                        fill: '#1976d2', 
+                                    },
+                                }} />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
             </Box>
         </>
     )
