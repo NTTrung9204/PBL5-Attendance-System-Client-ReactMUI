@@ -1,13 +1,25 @@
 import { Box, Button, Input, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Comment from "./Comment";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import SendIcon from '@mui/icons-material/Send';
 
 function Card() {
+    const sendButtonRef = useRef(null);
     const [focusReply, setFocusReply] = useState(false);
     const [textComment, setTextComment] = useState('');
     const [hiddenComment, setHiddenComment] = useState(false);
+
+    function blurTextFieldComment(event) {
+        if (event.relatedTarget === sendButtonRef.current) {
+            setFocusReply(false);
+        };
+    }
+
+    function sendComment() {
+        // setFocusReply(false);
+    }
 
     return (
         <Box sx={styles.container}>
@@ -38,16 +50,23 @@ function Card() {
             <Box sx={styles.reply}>
                 <Box sx={styles.reply_avatar} component="img" src="https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"></Box>
                 {
-                    focusReply ? <TextField
-                                    sx={styles.reply_textField}
-                                    label="Enter comment"
-                                    variant="outlined"  
-                                    value={textComment}
-                                    onChange={text => setTextComment(text.target.value)}
-                                    onBlur={() => setFocusReply(false)}
-                                    fullWidth 
-                                    autoFocus
-                                /> : <Button sx={styles.reply_button} onClick={() => {setFocusReply(true); }}>Reply</Button>
+                    focusReply ? 
+                        <Box sx={{ width: "100%", position: "relative" }}>
+                            <TextField
+                                sx={styles.reply_textField}
+                                label="Enter comment"
+                                variant="outlined"  
+                                value={textComment}
+                                onChange={text => setTextComment(text.target.value)}
+                                onBlur={(event) => blurTextFieldComment(event)}
+                                fullWidth 
+                                autoFocus
+                            />
+                            <Button sx={styles.sendButton} onClick={() => sendComment()}>
+                                <SendIcon sx={styles.sendIcon}/>
+                            </Button>
+                        </Box>
+                    : <Button sx={styles.reply_button} onClick={() => {setFocusReply(true); }}>Reply</Button>
                 }
             </Box>
         </Box>
@@ -131,6 +150,14 @@ const styles = {
         '& .MuiInputLabel-root.Mui-focused': {
             color: '#CCCCCC', 
         },
-    }
+    },
+    sendButton: {
+        position: "absolute",
+        top: "50%",
+        right: "0",
+        transform: "translateY(-50%)",
+    },
+    sendIcon: {
 
+    }
 }
