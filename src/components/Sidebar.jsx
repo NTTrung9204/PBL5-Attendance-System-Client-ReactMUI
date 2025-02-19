@@ -29,12 +29,14 @@ function Sidebar() {
           </ListItemIcon>
           <ListItemText primary="Groups" sx={{ color: 'white' }} />
         </ListItem>
-
         <ListItem button component={Link} to="/assignment">
           <ListItemIcon>
             <AssignmentIcon sx={{ color: 'white' }} />
           </ListItemIcon>
           <ListItemText primary="Assignment" sx={{ color: 'white' }} />
+        </ListItem>
+        <ListItem button component={Link} to="/class">
+          <ListItemText primary="Class" sx={{ color: 'white' }} />
         </ListItem>
       </List>
     </Drawer>
