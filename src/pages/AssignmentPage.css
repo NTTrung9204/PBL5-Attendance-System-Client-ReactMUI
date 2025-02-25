@@ -1,0 +1,171 @@
+@keyframes zoomIn {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.2);
+    }
+}
+
+@keyframes zoomIn_s {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.005);
+    }
+}
+
+@keyframes zoomIn_m {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.05);
+    }
+}
+
+.button {
+    background-color: #fff;
+    color: black;
+    border: 1px solid #ccc;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+.button:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.button_selected {
+    background-color: #007bff;
+    color: white;
+    border: solid 3px #000000;
+}
+
+.btn_goTop{
+    position: fixed;
+    right: 88px;
+    top: 88px;
+    background-color: #007bff;
+    color: #fff;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.btn_goTop:hover{
+    animation: zoomIn_m 0.3s forwards;
+
+    background-color: #ccc;
+    color: #000000;
+    
+}
+
+.assignment_header{
+    position: relative;
+    background-color: #fff;
+    border-bottom: solid 1px #ccc;
+    right: 0px;
+    padding-bottom: 8px;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.item_content{
+    font-size: 12px;
+    text-align: start;
+    color: rgb(204, 204, 204);
+}
+
+.item_content-header{
+    text-align: start;
+    flex-grow: 1
+}
+
+.AItem{
+    display: flex;
+    height: 84px;
+    width: 100%;
+}
+
+
+.AItem:hover{
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    animation: zoomIn_s 0.3s forwards;
+}
+
+.AItem_content{
+    display: flex;
+    flex-direction: column;
+    margin-left: 12px;
+    flex-grow: 1;
+}
+
+.mb-8{
+    margin-bottom: 8px;
+}
+
+.mb-16{
+    margin-bottom: 16px;
+}
+
+.mt-8{
+    margin-top: 8px;
+}
+
+.mr-62{
+    margin-right: 62px;
+}
+
+.mr-8{
+    margin-right: 8px;
+}
+
+.ml-2{
+    margin-left: 2px;
+}
+
+.fs-16{
+    font-size: 16px;
+}
+
+.filter{
+    transition: transform 0.3s ease-in-out;
+}
+
+.filter:hover{
+    animation: zoomIn 0.3s forwards;
+    color: #007bff;
+    cursor: pointer;
+}
+
+.success{
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #068506ad;
+    padding: 3px;
+    border-radius: 4px;
+    background-color: #56ac5629;
+}
+
+.disable{
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9291919c;
+    padding: 3px;
+    border-radius: 4px;
+    background-color: #9291913d;
+}
+  

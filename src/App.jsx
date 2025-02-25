@@ -19,6 +19,7 @@ function App() {
             component="main"
             sx={{
               flexGrow: 1,
+              width:'100%',
               bgcolor: 'background.default',
               padding: 3,
             }}
