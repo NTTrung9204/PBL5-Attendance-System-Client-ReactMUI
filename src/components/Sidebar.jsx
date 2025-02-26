@@ -30,7 +30,6 @@ function Sidebar() {
           </ListItemIcon>
           <ListItemText primary="Groups" sx={{ color: 'white' }} />
         </ListItem>
-
         <ListItem button component={Link} to="/assignment">
           <ListItemIcon>
             <AssignmentIcon sx={{ color: 'white' }} />

@@ -8,25 +8,27 @@ import AssignmentPage from './pages/AssignmentPage';
 import Activity from './pages/Activity';
 import { Calculate } from '@mui/icons-material';
 import Chat from './pages/Chat';
+import GeneralClass from './pages/class/GeneralClass';
+import HomeClass from './pages/class/HomeClass';
 
 function App() {
   return (
 
     <Router style='width: 100%'>
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' , overflowY: "hidden" }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' , overflowY: "hidden" }}>
         <Header />
 
-        <Box sx={{ display: 'flex', flexGrow: 1, marginTop: 8 }}>
+        <Box sx={{ display: 'flex', flexGrow: 1, marginTop: 8, height: '100%' }}>
           <Sidebar />
 
           <Box
             component="main"
             sx={{
               flexGrow: 1,
+              width:'100%',
               bgcolor: 'background.default',
               padding: 0,
               overflow: "hidden !important",
-              width: '100%'
             }}
           >
             <Routes>
@@ -35,6 +37,7 @@ function App() {
               <Route path="/assignment" element={<AssignmentPage />} />
               <Route path="/activities/*" element={<Activity />} />
               <Route path="/chats/*" element={<Chat />} />
+              <Route path="/class/*" element={<HomeClass />} />
             </Routes>
           </Box>
         </Box>
