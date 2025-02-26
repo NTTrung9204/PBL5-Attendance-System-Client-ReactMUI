@@ -1,6 +1,7 @@
 import React from 'react';
 import { Drawer, List, ListItem, ListItemText, ListItemIcon, Typography } from '@mui/material';
-import { Group as GroupIcon, Assignment as AssignmentIcon } from '@mui/icons-material';
+import { Group as GroupIcon, Assignment as AssignmentIcon, Notifications as ActivityIcon} from '@mui/icons-material';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import { Link } from 'react-router-dom';
 
 function Sidebar() {
@@ -35,6 +36,20 @@ function Sidebar() {
             <AssignmentIcon sx={{ color: 'white' }} />
           </ListItemIcon>
           <ListItemText primary="Assignment" sx={{ color: 'white' }} />
+        </ListItem>
+
+        <ListItem button component={Link} to="/activities">
+          <ListItemIcon>
+            <ActivityIcon sx={{ color: 'white' }} />
+          </ListItemIcon>
+          <ListItemText primary="Activity" sx={{ color: 'white' }} />
+        </ListItem>
+
+        <ListItem button component={Link} to="/chats">
+          <ListItemIcon>
+            <ChatBubbleIcon sx={{ color: 'white' }} />
+          </ListItemIcon>
+          <ListItemText primary="Chat" sx={{ color: 'white' }} />
         </ListItem>
       </List>
     </Drawer>
