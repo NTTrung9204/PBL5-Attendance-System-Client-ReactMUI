@@ -21,24 +21,24 @@ function createData(name, calories, fat, carbs, protein) {
     createData('Gingerbread', 356, 16.0, 49, 3.9),
     createData('Gingerbread', 356, 16.0, 49, 3.9),
     createData('Gingerbread', 356, 16.0, 49, 3.9),
+    createData('Gingerbread2', 356, 16.0, 49, 3.9),
     createData('Gingerbread', 356, 16.0, 49, 3.9),
     createData('Gingerbread', 356, 16.0, 49, 3.9),
+    createData('Gingerbread2', 356, 16.0, 49, 3.9),
     createData('Gingerbread', 356, 16.0, 49, 3.9),
+    createData('Gingerbread2', 356, 16.0, 49, 3.9),
     createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
+    createData('Gingerbread2', 356, 16.0, 49, 3.9),
+    createData('Gingerbread2', 356, 16.0, 49, 3.9),
+    createData('Gingerbread2', 356, 16.0, 49, 3.9),
+    createData('Gingerbread2', 356, 16.0, 49, 3.9),
     createData('Gingerbread', 356, 16.0, 49, 3.9),
   ];
 
 function GradleClass() {
     return (
         <Box sx={styles.container}>
-            <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
+            <TableContainer component={Paper} sx={{ boxShadow: "none", overflow: "hidden" }}>
                 <Table size="small" aria-label="a dense table">
                     <TableHead>
                         <TableRow>
@@ -80,18 +80,12 @@ const styles = {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        // gap: "25px",
-        // overflowY: 'auto',
-        height: '100%',
-        margin: "20px 0px",
+        padding: "20px 0px"
     },
     tableContent: {
         width: "100%",
     },
     tableCell: {
-        // whiteSpace: "nowrap", 
-        // overflow: "hidden", 
-        // textOverflow: "ellipsis"
         padding: "15px 50px",
     }
 }

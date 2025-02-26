@@ -30,7 +30,7 @@ function AssignmentPage() {
   },[])
 
   return (
-    <Box>
+    <Box sx={{ padding: 3 }}>
       <Box className={'assignment_header'}>
         <Box>
           {
@@ -115,6 +115,14 @@ const Assignments = [
   },
   {
     id:7,
+    nameAssignment: 'Swimming',
+    nameClass: 'Group_Swimming_22Nh14',
+    deadline: '2025-12-25T00:00:00',
+    submitStatus: false,
+    timeSubmit: null
+  },
+  {
+    id:8,
     nameAssignment: 'Swimming',
     nameClass: 'Group_Swimming_22Nh14',
     deadline: '2025-12-25T00:00:00',

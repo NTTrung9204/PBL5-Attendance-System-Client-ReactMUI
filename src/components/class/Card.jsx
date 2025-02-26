@@ -77,7 +77,6 @@ export default Card;
 
 const styles = {
     container: {
-        backgroundColor: "#DDDDDD",
         borderRadius: "5px",
         boxShadow: "0px 10px 16px 0px",
         padding: "20px",

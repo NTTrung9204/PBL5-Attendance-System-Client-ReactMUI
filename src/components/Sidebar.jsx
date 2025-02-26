@@ -35,9 +35,6 @@ function Sidebar() {
           </ListItemIcon>
           <ListItemText primary="Assignment" sx={{ color: 'white' }} />
         </ListItem>
-        <ListItem button component={Link} to="/class">
-          <ListItemText primary="Class" sx={{ color: 'white' }} />
-        </ListItem>
       </List>
     </Drawer>
   );

@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Box, Typography, Menu, MenuItem, IconButton, Button, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import { Group as GroupIcon, Assignment as AssignmentIcon, Height, BorderRight } from '@mui/icons-material';
 import { useState } from "react";
-import { Navigate, Route, Router, Routes } from "react-router-dom"
+import { Navigate, Route, Router, Routes, useNavigate } from "react-router-dom"
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Link } from 'react-router-dom';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 function SideBarClass() {
+    const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -18,8 +19,8 @@ function SideBarClass() {
     };
 
     return (
-        <Box sx={styles.container}>
-            <Button sx={styles.back}>
+        <Box sx={{ ...styles.container, padding: "20px" }}>
+            <Button sx={styles.back} onClick={() => navigate("/groups")}>
                 <ArrowBackIosNewIcon />
                 <Typography sx={styles.back_text}>All teams</Typography>
             </Button>
@@ -76,8 +77,6 @@ const styles = {
     container: {
         width: "100%",
         height: "100%",
-        backgroundColor: "#EEEEEE",
-        padding: "20px",
         borderRight: "2px solid #666666",
     },
     back: {
@@ -90,6 +89,7 @@ const styles = {
           color: "#6699FF",    
           cursor: "pointer",        
         },
+        padding: "6px 0px"
     },
     back_text: {
 
@@ -118,7 +118,7 @@ const styles = {
     },
     itemNavBar: {
         "&:hover": {
-          backgroundColor: "#777777",    
+          backgroundColor: "#DDDDDD",    
           cursor: "pointer",        
         },
     },
