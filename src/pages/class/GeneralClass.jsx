@@ -29,14 +29,14 @@ function GeneralClass () {
                             <Button onClick={() => setCheckPost(false)}><CloseIcon/></Button>
                         </Box>
                         <Input 
-                            sx={{ color: "#DDDDDD" }}
+                            sx={{ color: "#000000" }}
                             placeholder='Title'
                             value={inputTitle}
                             onChange={(text) => setInputTitle(text.target.value)}
                             required
                         />
                         <Input 
-                            sx={{ color: "#DDDDDD" }}
+                            sx={{ color: "#000000" }}
                             placeholder='Description'
                             value={inputDescription}
                             onChange={(text) => setInputDescription(text.target.value)}
@@ -63,8 +63,8 @@ const styles = {
         flexDirection: "column",
         justifyContent: "start",
         alignItems: "center",
-        width: "70%",
-        backgroundColor: "#444444",
+        width: "100%",
+        backgroundColor: "#EEEEEE",
         padding: "20px 10% 100px 10%",
         gap: "25px",
         overflowY: 'auto',
@@ -72,7 +72,7 @@ const styles = {
     },
     formPost: {
         width: "100%",
-        backgroundColor: "#555555",
+        backgroundColor: "#DDDDDD",
         borderRadius: "5px",
         boxShadow: "0px 10px 16px 0px",
         padding: "20px",
@@ -98,7 +98,7 @@ const styles = {
         borderRadius: "100%",
     },
     name: {
-        color: "white"
+        color: "#000000"
     },
     buttonPost: {
         width: "100%",

@@ -58,11 +58,11 @@ function SideBarClass() {
             <Box>
                 <List>
                     <ListItem sx={styles.itemNavBar} button component={Link} to="/class/general">
-                        <ListItemText primary="General" sx={{ color: 'white' }} />
+                        <ListItemText primary="General" sx={{ color: '#000000' }} />
                     </ListItem>
 
                     <ListItem sx={styles.itemNavBar} button component={Link} to="/class/gradles">
-                        <ListItemText primary="Gradles" sx={{ color: 'white' }} />
+                        <ListItemText primary="Gradles" sx={{ color: '#000000' }} />
                     </ListItem>
                 </List>
             </Box>
@@ -74,14 +74,14 @@ export default SideBarClass;
 
 const styles = {
     container: {
-        width: "30%",
+        width: "100%",
         height: "100%",
-        backgroundColor: "#444444",
+        backgroundColor: "#EEEEEE",
         padding: "20px",
         borderRight: "2px solid #666666",
     },
     back: {
-        color: "#EEEEEE",
+        color: "#000000",
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
@@ -105,7 +105,7 @@ const styles = {
         justifyContent: "space-between"
     },
     title: {
-        color: "#ffffff",
+        color: "#000000",
         fontSize: "30px",
         maxWidth: "calc(100% - 80px)",
         whiteSpace: "nowrap", 
@@ -113,7 +113,7 @@ const styles = {
         textOverflow: "ellipsis"
     },
     dots: {
-        color: "white",
+        color: "#000000",
         border: "none",
     },
     itemNavBar: {

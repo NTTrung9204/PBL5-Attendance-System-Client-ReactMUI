@@ -77,7 +77,7 @@ export default Card;
 
 const styles = {
     container: {
-        backgroundColor: "#555555",
+        backgroundColor: "#DDDDDD",
         borderRadius: "5px",
         boxShadow: "0px 10px 16px 0px",
         padding: "20px",
@@ -96,7 +96,7 @@ const styles = {
         borderRadius: "100%",
     },
     name: {
-        color: "#ffffff",
+        color: "#000000",
         fontSize: "18px"
     },
     date: {
@@ -105,12 +105,12 @@ const styles = {
     },
     title: {
         fontSize: "35px",
-        color: "#DDDDDD",
+        color: "#000000",
         marginBottom: "20px",
     },
     description: {
         fontSize: "15px",
-        color: "#DDDDDD",
+        color: "#000000",
         borderBottom: "2px solid #444444",
         paddingBottom: "10px",
     },
@@ -132,7 +132,7 @@ const styles = {
         borderRadius: "100%",
     },
     reply_button: {
-        color: "#CCCCCC",
+        color: "#000000",
         "&:hover": {
           color: "#0099FF",
         },
@@ -140,15 +140,15 @@ const styles = {
     reply_textField: {
         '& .MuiOutlinedInput-root': {
             '&.Mui-focused fieldset': {
-                borderColor: '#CCCCCC',
+                borderColor: '#000000',
             }
         },
-        color: "#CCCCCC",
+        color: "#000000",
         '& .MuiInputBase-root': {
-            color: '#CCCCCC', 
+            color: '#000000', 
         },
         '& .MuiInputLabel-root.Mui-focused': {
-            color: '#CCCCCC', 
+            color: '#000000', 
         },
     },
     sendButton: {

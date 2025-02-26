@@ -31,7 +31,7 @@ const styles = {
         borderRadius: "100%",
     },
     name: {
-        color: "#ffffff",
+        color: "#000000",
         fontSize: "15px"
     },
     date: {
@@ -40,7 +40,7 @@ const styles = {
     },
     description: {
         fontSize: "14px",
-        color: "#DDDDDD",
+        color: "#000000",
         marginLeft: "45px",
     }
 }
