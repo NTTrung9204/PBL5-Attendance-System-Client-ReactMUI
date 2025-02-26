@@ -37,9 +37,13 @@ function Card({groupTeamName}) {
                     flexDirection: "column",
                     width: "350px",
                     height: "auto",
-                    backgroundColor: "#ccc",
+                    backgroundColor: "#fff",
                     borderRadius: "3px",
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2);"
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.16)',
+                    '&:hover':{
+                        backgroundColor: '#F5F5F5',
+                        cursor: 'pointer'
+                    }
                     
                 }}>
                 <Box
