@@ -5,6 +5,8 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import GroupsPage from './pages/GroupsPage';
 import AssignmentPage from './pages/AssignmentPage';
+import GeneralClass from './pages/class/GeneralClass';
+import HomeClass from './pages/class/HomeClass';
 
 function App() {
   return (
@@ -12,7 +14,7 @@ function App() {
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <Header />
 
-        <Box sx={{ display: 'flex', flexGrow: 1, marginTop: 8 }}>
+        <Box sx={{ display: 'flex', flexGrow: 1, marginTop: 8, height: '100%' }}>
           <Sidebar />
 
           <Box
@@ -21,7 +23,7 @@ function App() {
               flexGrow: 1,
               width:'100%',
               bgcolor: 'background.default',
-              padding: 3,
+              padding: 0,
             }}
           >
             <Routes>
@@ -29,6 +31,7 @@ function App() {
 
               <Route path="/groups" element={<GroupsPage />} />
               <Route path="/assignment" element={<AssignmentPage />} />
+              <Route path="/class/*" element={<HomeClass />} />
             </Routes>
           </Box>
         </Box>
