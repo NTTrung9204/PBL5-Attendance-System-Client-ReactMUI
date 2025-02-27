@@ -12,7 +12,7 @@ function App() {
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <Header />
 
-        <Box sx={{ display: 'flex', flexGrow: 1, marginTop: 8 }}>
+        <Box sx={{ display: 'flex', flexGrow: 1, marginTop: 8, zIndex:1 }}>
           <Sidebar />
 
           <Box

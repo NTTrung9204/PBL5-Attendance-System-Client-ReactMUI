@@ -67,7 +67,7 @@
 }
 
 .assignment_header{
-    position: relative;
+    position: sticky;
     background-color: #fff;
     border-bottom: solid 1px #ccc;
     right: 0px;
@@ -137,6 +137,23 @@
     font-size: 16px;
 }
 
+input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+input:focus {
+    border-color: #4a90e2;
+    box-shadow: 2px 2px 12px rgba(74, 144, 226, 0.5);
+}
+
+
 .filter{
     transition: transform 0.3s ease-in-out;
 }
@@ -169,3 +186,82 @@
     background-color: #9291913d;
 }
   
+.modal{
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal_container{
+    background-color: #fff;
+    width: 340px;
+    display: flex;
+    right: 0;
+    position: absolute;
+    top: 64px;
+    flex-direction: column;
+    bottom: 0;
+    animation: modalFadeIn 0.5s ease-in-out forwards;
+}
+
+/* Hiệu ứng trôi xuống của modal */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(150px);
+    }   
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hidden{
+    animation: modalFadeOut 0.5s ease-in-out forwards;
+}
+
+@keyframes modalFadeOut {
+    from {
+        opacity: 0;
+        transform: translateX(0);
+    }   
+    to {
+        opacity: 1;
+        transform: translateX(100%);
+    }
+}
+
+.filter_header{
+    padding: 16px;
+    font-weight: 600;
+    font-size: 22px;
+}
+
+.filter_body{
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    flex-grow: 1;
+}
+
+.filter_body label{
+    color: #ccc;
+}
+
+.filter_footer{
+    padding: 16px;
+    position: relative;
+}
+
+.filter_footer button{
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+}
+
+.hidden{
+    display: none;
+}

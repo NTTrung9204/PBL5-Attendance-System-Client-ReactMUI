@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './AssignmentPage.css';
 import { Box } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import BlockIcon from '@mui/icons-material/Block';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import Filter from './Filter';
 
 const status = [
   'Upcoming',
@@ -15,6 +16,8 @@ const status = [
 function AssignmentPage() {
   const [currentPage, setCurrentPage] = useState('Upcoming')
   const [stateGoTop, setStateGoTop] = useState(false)
+
+  const modal = useRef()
 
   useEffect(()=>{
     const handleGoToTop = () => {
@@ -29,6 +32,15 @@ function AssignmentPage() {
     }
   },[])
 
+  const handleShowModal = ()=>{
+    let strClass = modal.current.className.split(' ')
+    if (strClass.includes("hidden")){
+        const newClass = strClass.filter(item => item!='hidden')
+        modal.current.className = newClass.join(' ')
+    }
+}
+
+  
   return (
     <Box>
       <Box className={'assignment_header'}>
@@ -44,7 +56,7 @@ function AssignmentPage() {
             })
           }
         </Box>
-        <Box className='mr-62 filter'>
+        <Box className='mr-62 filter' onClick={handleShowModal}>
         <FilterListIcon/>  
         </Box>
       </Box>
@@ -58,6 +70,7 @@ function AssignmentPage() {
               Go to top
         </button>
       }
+      <Filter Ref={modal} ></Filter>
     </Box>
   );
 }
@@ -154,7 +167,7 @@ function Upcoming(){
               {
                 gr[1].map((item)=>{
                   return (
-                    <AssignmentItem {...item} />
+                    <AssignmentItem {...item} key={item.id} />
                   )
                 })
               }
