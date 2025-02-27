@@ -5,7 +5,7 @@ import AccountMenu from './AccountMenu'
 
 function Header() {
   return (
-    <AppBar position="fixed" sx={{ top: 0, left: 0, right: 0, zIndex: 3, backgroundColor:'#EBEBEB' }}>
+    <AppBar position="fixed" sx={{ top: 0, left: 0, right: 0, zIndex: 3, backgroundColor:'#EBEBEB' , boxShadow: 'none', borderBottom: '1px solid #ccc'}}>
       <Toolbar 
         sx={{ 
           display: 'flex', 

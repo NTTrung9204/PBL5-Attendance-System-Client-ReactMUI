@@ -15,7 +15,7 @@ const CurrentChatBox = () => {
             background: "#fff",
             display: 'flex',
             flexDirection: 'column',
-            height: '97%',
+            height: '100%',
         },
         chatHeader: {
             padding: "13.5px",
