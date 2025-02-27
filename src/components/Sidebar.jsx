@@ -5,15 +5,21 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import { Link } from 'react-router-dom';
 
 function Sidebar() {
+  const listItemTestStyle = {
+    '& .MuiListItemText-primary': {
+      fontSize: '10px',
+      color: '#727272'
+    }
+  }
   return (
     <Drawer
       sx={{
-        width: 240,
+        width: 67,
         flexShrink: 0,
         '& .MuiDrawer-paper': {
-          width: 240,
+          width: 67,
           boxSizing: 'border-box',
-          bgcolor: '#1976d2',
+          bgcolor: '#EBEBEB',
         },
         zIndex: 0
       }}
@@ -21,34 +27,33 @@ function Sidebar() {
       anchor="left"
     >
       <Typography variant="h6" sx={{ padding: 2, textAlign: 'center', color: 'white' }}>
-        App Sidebar
       </Typography>
-      <List>
-        <ListItem button component={Link} to="/groups">
-          <ListItemIcon>
-            <GroupIcon sx={{ color: 'white' }} />
+      <List sx={{marginTop: '10px'}}>
+        <ListItem sx={{display: 'flex', flexDirection: 'column'}} button component={Link} to="/groups">
+          <ListItemIcon sx={{display: 'flex', justifyContent: 'center'}}>
+            <GroupIcon sx={{ color: '#727272' }} />
           </ListItemIcon>
-          <ListItemText primary="Groups" sx={{ color: 'white' }} />
+          <ListItemText primary="Groups" sx={listItemTestStyle} />
         </ListItem>
-        <ListItem button component={Link} to="/assignment">
-          <ListItemIcon>
-            <AssignmentIcon sx={{ color: 'white' }} />
+        <ListItem sx={{display: 'flex', flexDirection: 'column'}} button component={Link} to="/assignment">
+          <ListItemIcon sx={{display: 'flex', justifyContent: 'center'}}>
+            <AssignmentIcon sx={{ color: '#727272' }} />
           </ListItemIcon>
-          <ListItemText primary="Assignment" sx={{ color: 'white' }} />
-        </ListItem>
-
-        <ListItem button component={Link} to="/activities">
-          <ListItemIcon>
-            <ActivityIcon sx={{ color: 'white' }} />
-          </ListItemIcon>
-          <ListItemText primary="Activity" sx={{ color: 'white' }} />
+          <ListItemText primary="Assignment" sx={listItemTestStyle} />
         </ListItem>
 
-        <ListItem button component={Link} to="/chats">
-          <ListItemIcon>
-            <ChatBubbleIcon sx={{ color: 'white' }} />
+        <ListItem sx={{display: 'flex', flexDirection: 'column'}} button component={Link} to="/activities">
+          <ListItemIcon sx={{display: 'flex', justifyContent: 'center'}}>
+            <ActivityIcon sx={{ color: '#727272' }} />
           </ListItemIcon>
-          <ListItemText primary="Chat" sx={{ color: 'white' }} />
+          <ListItemText primary="Activity" sx={listItemTestStyle} />
+        </ListItem>
+
+        <ListItem sx={{display: 'flex', flexDirection: 'column'}} button component={Link} to="/chats">
+          <ListItemIcon sx={{display: 'flex', justifyContent: 'center'}}>
+            <ChatBubbleIcon sx={{ color: '#727272' }} />
+          </ListItemIcon>
+          <ListItemText primary="Chat" sx={listItemTestStyle} />
         </ListItem>
       </List>
     </Drawer>

@@ -16,9 +16,9 @@ function App() {
 
     <Router style='width: 100%'>
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' , overflowY: "hidden" }}>
-        <Header />
+        <Header/>
 
-        <Box sx={{ display: 'flex', flexGrow: 1, marginTop: 8, height: '100%' }}>
+        <Box sx={{ display: 'flex', flexGrow: 1, marginTop: '49px', height: '100%' }}>
           <Sidebar />
 
           <Box
