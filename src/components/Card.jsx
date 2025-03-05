@@ -17,21 +17,26 @@ function Card({groupTeamName}) {
     const menuItemsList = [
         {
             title: "Join",
-            onClick: () => {
+            onClick: (e) => {
+                e.stopPropagation();
                 console.log("join")
-                navigate("/class")
+                // navigate("/class")
             }
         },
         {
             title: "Back",
-            onClick: () => console.log("Back")
+            onClick: (e) => {
+                e.stopPropagation();
+                console.log("Back")
+            }
         },
     ]
 
 
     return (
         <>
-            <Box sx={{
+            <Box  
+                sx={{
                     padding: "10px",
                     display: "flex",
                     flexDirection: "column",
@@ -43,8 +48,7 @@ function Card({groupTeamName}) {
                     '&:hover':{
                         backgroundColor: '#F5F5F5',
                         cursor: 'pointer'
-                    }
-                    
+                    },
                 }}>
                 <Box
                     sx={{
@@ -55,9 +59,21 @@ function Card({groupTeamName}) {
                         width: "100%"
                     }}
                 >
-                    <Avatar variant="rounded" style={{ width: 72, height: 72 }} {...stringAvatar(groupTeamName)} />
+                    <Avatar  variant="rounded"
+                    
+                    onClick={(event) => {
+                        navigate("/calendar");
+                    }}    
+
+                    style={{ width: 72, height: 72 }} {...stringAvatar(groupTeamName)} />
                     <Tooltip title={groupTeamName} arrow>
-                        <span style={{
+                        <span 
+                           
+                        onClick={(event) => {
+                            navigate("/calendar");    
+                        }}       
+
+                        style={{
                             display: "-webkit-box",
                             WebkitLineClamp: "2",
                             WebkitBoxOrient: "vertical",
