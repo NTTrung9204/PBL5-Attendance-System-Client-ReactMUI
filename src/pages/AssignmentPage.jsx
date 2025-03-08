@@ -17,7 +17,8 @@ function AssignmentPage() {
   const [currentPage, setCurrentPage] = useState('Upcoming')
   const [stateGoTop, setStateGoTop] = useState(false)
 
-  const modal = useRef()
+  const filterModal = useRef()
+  
 
   useEffect(()=>{
     const handleGoToTop = () => {
@@ -32,17 +33,12 @@ function AssignmentPage() {
     }
   },[])
 
-  const handleShowModal = ()=>{
-    let strClass = modal.current.className.split(' ')
-    if (strClass.includes("hidden")){
-        const newClass = strClass.filter(item => item!='hidden')
-        modal.current.className = newClass.join(' ')
-    }
-}
+
+
 
   
   return (
-    <Box>
+    <Box sx={{ padding: 3, height: '100vh', overflowY: 'auto' }}>
       <Box className={'assignment_header'}>
         <Box>
           {
@@ -56,7 +52,7 @@ function AssignmentPage() {
             })
           }
         </Box>
-        <Box className='mr-62 filter' onClick={handleShowModal}>
+        <Box className='mr-62 filter' onClick={()=>filterModal.current?.openModal()}>
         <FilterListIcon/>  
         </Box>
       </Box>
@@ -70,7 +66,7 @@ function AssignmentPage() {
               Go to top
         </button>
       }
-      <Filter Ref={modal} ></Filter>
+      <Filter ref={filterModal} ></Filter>
     </Box>
   );
 }
@@ -128,6 +124,14 @@ const Assignments = [
   },
   {
     id:7,
+    nameAssignment: 'Swimming',
+    nameClass: 'Group_Swimming_22Nh14',
+    deadline: '2025-12-25T00:00:00',
+    submitStatus: false,
+    timeSubmit: null
+  },
+  {
+    id:8,
     nameAssignment: 'Swimming',
     nameClass: 'Group_Swimming_22Nh14',
     deadline: '2025-12-25T00:00:00',

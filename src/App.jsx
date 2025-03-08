@@ -5,14 +5,20 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import GroupsPage from './pages/GroupsPage';
 import AssignmentPage from './pages/AssignmentPage';
+import Activity from './pages/Activity';
+import { Calculate } from '@mui/icons-material';
+import Chat from './pages/Chat';
+import GeneralClass from './pages/class/GeneralClass';
+import HomeClass from './pages/class/HomeClass';
 
 function App() {
   return (
-    <Router>
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-        <Header />
 
-        <Box sx={{ display: 'flex', flexGrow: 1, marginTop: 8, zIndex:1 }}>
+    <Router style='width: 100%'>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' , overflowY: "hidden" }}>
+        <Header/>
+
+        <Box sx={{ display: 'flex', flexGrow: 1, marginTop: '49px', height: '100%' }}>
           <Sidebar />
 
           <Box
@@ -21,14 +27,17 @@ function App() {
               flexGrow: 1,
               width:'100%',
               bgcolor: 'background.default',
-              padding: 3,
+              padding: 0,
+              overflow: "hidden !important",
             }}
           >
             <Routes>
               <Route path="/" element={<Navigate to="/groups" />} />
-
               <Route path="/groups" element={<GroupsPage />} />
               <Route path="/assignment" element={<AssignmentPage />} />
+              <Route path="/activities/*" element={<Activity />} />
+              <Route path="/chats/*" element={<Chat />} />
+              <Route path="/class/*" element={<HomeClass />} />
             </Routes>
           </Box>
         </Box>

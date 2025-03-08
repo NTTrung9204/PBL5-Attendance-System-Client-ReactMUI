@@ -9,13 +9,18 @@ import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import IconButton from '@mui/material/IconButton';
+import { useNavigate } from "react-router-dom"
 
 function Card({groupTeamName}) {
+    const navigate = useNavigate();
 
     const menuItemsList = [
         {
             title: "Join",
-            onClick: () => console.log("join")
+            onClick: () => {
+                console.log("join")
+                navigate("/class")
+            }
         },
         {
             title: "Back",
@@ -27,15 +32,20 @@ function Card({groupTeamName}) {
     return (
         <>
             <Box sx={{
-                padding: "10px",
-                display: "flex",
-                flexDirection: "column",
-                width: "350px",
-                height: "auto",
-                backgroundColor: "#ccc",
-                borderRadius: "3px",
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2);"
-            }}>
+                    padding: "10px",
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "350px",
+                    height: "auto",
+                    backgroundColor: "#fff",
+                    borderRadius: "3px",
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.16)',
+                    '&:hover':{
+                        backgroundColor: '#F5F5F5',
+                        cursor: 'pointer'
+                    }
+                    
+                }}>
                 <Box
                     sx={{
                         display: "flex",
@@ -63,6 +73,7 @@ function Card({groupTeamName}) {
                 </Box>
                 <Box
                     sx={{marginTop: "10px"}}
+                    
                 >
                     <Tooltip title="Announcements">
                         <IconButton>

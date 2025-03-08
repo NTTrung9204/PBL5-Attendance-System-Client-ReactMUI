@@ -10,7 +10,7 @@ function GroupsPage() {
   const groupTeamName_4 = "2,100+ ready-to-use React Material Icons from the official website.";
 
   return (
-    <Box>
+    <Box sx={{ padding: 3 }}>
       <ToggleSection label="Classes">
         <Card groupTeamName={groupTeamName_1}></Card>
         <Card groupTeamName={groupTeamName_2}></Card>

@@ -67,7 +67,7 @@
 }
 
 .assignment_header{
-    position: sticky;
+    position: relative;
     background-color: #fff;
     border-bottom: solid 1px #ccc;
     right: 0px;
@@ -193,6 +193,8 @@ input:focus {
     left: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.4);
+    display: none;
+  
 }
 
 .modal_container{
@@ -201,38 +203,28 @@ input:focus {
     display: flex;
     right: 0;
     position: absolute;
-    top: 64px;
+    top: 47px;
     flex-direction: column;
     bottom: 0;
-    animation: modalFadeIn 0.5s ease-in-out forwards;
+    transform: translateX(150px);
+    opacity: 0;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
 
-/* Hiệu ứng trôi xuống của modal */
-@keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: translateX(150px);
-    }   
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.modal.open {
+    display: block;
+}
+
+.modal.open .modal_container{
+    transform: translateX(0);
+    opacity: 1 !important;
 }
 
 .hidden{
-    animation: modalFadeOut 0.5s ease-in-out forwards;
+    transform: translateX(100%);
+    opacity: 0;
 }
 
-@keyframes modalFadeOut {
-    from {
-        opacity: 0;
-        transform: translateX(0);
-    }   
-    to {
-        opacity: 1;
-        transform: translateX(100%);
-    }
-}
 
 .filter_header{
     padding: 16px;
@@ -262,6 +254,3 @@ input:focus {
     bottom: 16px;
 }
 
-.hidden{
-    display: none;
-}

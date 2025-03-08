@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 
-function Filter(){
+const Filter = forwardRef((props, ref)=>{
 
     const [state, setState] = useState(false)
 
@@ -11,19 +11,27 @@ function Filter(){
 
     const hideModal = ()=>{
         let strClass = modal.current.className.split(' ')
-        if (!strClass.includes("hidden")){
-            strClass.push('hidden')
-            modal.current.className = strClass.join(' ')
+        if (!strClass.includes("hidden")&&modal.current){
+            const newClass = strClass.filter(item => item!='open')
+            newClass.push('hidden')
+            modal.current.className = newClass.join(' ')
         }
     }
     const openModal = ()=>{
+        console.log('mo modal')
         let strClass = modal.current.className.split(' ')
-        if (strClass.includes("hidden")){
+        if (strClass.includes("hidden")&&modal.current){
             const newClass = strClass.filter(item => item!='hidden')
+            newClass.push('open')
+            console.log(newClass)
             modal.current.className = newClass.join(' ')
         }
     }
     
+    useImperativeHandle(ref, ()=>(
+        {openModal}
+    ))
+
     useEffect(()=>{
         if (modal) {
             console.log(modal)
@@ -41,7 +49,7 @@ function Filter(){
     )
 
     return (
-        <Box ref={modal} className={'modal'}>
+        <Box ref={modal} className={'modal hidden'}>
             <Box ref={modalContainer} className={'modal_container'}>
                 <Box className="filter_header">Filters</Box>
                 <Box className="filter_body">
@@ -54,6 +62,6 @@ function Filter(){
             </Box>
         </Box>
     )
-}
+});
 
 export default Filter
