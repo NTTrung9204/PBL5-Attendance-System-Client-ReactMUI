@@ -10,6 +10,8 @@ import { Calculate } from '@mui/icons-material';
 import Chat from './pages/Chat';
 import GeneralClass from './pages/class/GeneralClass';
 import HomeClass from './pages/class/HomeClass';
+import CalendarPage from './pages/CalendarPage';
+import AttendancePage from './pages/AttendancePage';
 
 function App() {
   return (
@@ -38,6 +40,8 @@ function App() {
               <Route path="/activities/*" element={<Activity />} />
               <Route path="/chats/*" element={<Chat />} />
               <Route path="/class/*" element={<HomeClass />} />
+              <Route path="/calendar/*" element={<CalendarPage />} />
+              <Route path="/calendar/attendance" element={<AttendancePage />} />
             </Routes>
           </Box>
         </Box>
