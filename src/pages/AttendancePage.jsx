@@ -49,7 +49,7 @@ export default function AttendancePage() {
                 </Box>
             </Box>
             <Box sx={styles.statistic}>
-                <Box sx={styles.statistic__item}>
+                <Box sx={styles.statistic__item} className="br-8">
                     <Typography sx={styles.statistic__item__title}>Statistic Summary</Typography>
                     <Box sx={styles.statistic__item__parameter}>
                         <Box sx={styles.parameter}>
@@ -66,7 +66,7 @@ export default function AttendancePage() {
                         </Box>
                     </Box>
                 </Box>
-                <Box sx={styles.statistic__item}>
+                <Box sx={styles.statistic__item} className="br-8">
                     <Typography sx={styles.statistic__item__title}>Present Summary</Typography>
                     <Box sx={styles.statistic__item__parameter}>
                         <Box sx={styles.parameter}>

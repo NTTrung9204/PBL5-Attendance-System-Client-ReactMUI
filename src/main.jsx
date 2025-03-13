@@ -10,7 +10,7 @@ root.style.width='100%'
 
 function Main(){
 
-  const [page, setPage] = useState('admin');
+  const [page, setPage] = useState('client');
 
   return (
     <StrictMode>

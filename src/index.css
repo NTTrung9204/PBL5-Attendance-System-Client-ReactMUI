@@ -71,3 +71,7 @@ button:focus-visible {
 #root{
    width: 100%;
 }
+
+.br-8{
+  border-radius: 8px;
+}

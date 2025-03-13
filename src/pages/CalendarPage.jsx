@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import CalendarCard from "../components/Calendar/CalendarCard";
+import { Route, Routes } from "react-router-dom";
 
 function CalendarPage() {
   return (
@@ -17,8 +18,8 @@ function CalendarPage() {
             justifyContent: 'center',
             paddingBottom: '100px'
         }}>    
-            
-            <CalendarCard date={'March 08 2023'} status={'Passed'} present={45} total={50} startTime={'08:53'}/>
+
+            <CalendarCard date={'March 08 2023'} status={'Passed'} present={45} total={50} startTime={'08:53'}/>  
             <CalendarCard date={'March 08 2023'} status={'Passed'} present={45} total={50} startTime={'08:53'}/>
             <CalendarCard date={'March 08 2023'} status={'Now'} present={45} total={50} startTime={'08:53'}/>
             <CalendarCard date={'March 08 2023'} status={'Pending'} present={45} total={50} startTime={'08:53'}/>

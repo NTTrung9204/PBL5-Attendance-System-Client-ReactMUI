@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import ScheduleIcon from "@mui/icons-material/Schedule";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const styles = {
   container: {
@@ -55,6 +56,7 @@ const styles = {
 };
 
 function CalendarCard({ date, status, present, total, startTime }) {
+  const navigate = useNavigate()
   return (
     <Box sx={{
         ...styles.container,
@@ -63,7 +65,9 @@ function CalendarCard({ date, status, present, total, startTime }) {
           transform: 'translateY(-10px)',
           boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)'
         }
-      }}>
+      }}
+      onClick={() => navigate('/calendar/attendance')}
+      >
       {/* Hàng 1: Date & Status */}
       <Box style={styles.row}>
         <Box style={styles.dateContainer}>
