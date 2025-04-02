@@ -11,7 +11,7 @@ import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import IconButton from '@mui/material/IconButton';
 import { useNavigate } from "react-router-dom"
 
-function Card({groupTeamName}) {
+function Card({groupTeamName, classId}) {
     const navigate = useNavigate();
 
     const menuItemsList = [
@@ -49,7 +49,9 @@ function Card({groupTeamName}) {
                         backgroundColor: '#F5F5F5',
                         cursor: 'pointer'
                     },
-                }}>
+                }}
+                onClick={() => navigate(`/calendar/${classId}`)}
+            >
                 <Box
                     sx={{
                         display: "flex",
@@ -62,7 +64,8 @@ function Card({groupTeamName}) {
                     <Avatar  variant="rounded"
                     
                     onClick={(event) => {
-                        navigate("/calendar");
+                        event.stopPropagation();
+                        navigate(`/calendar/${classId}`);
                     }}    
 
                     style={{ width: 72, height: 72 }} {...stringAvatar(groupTeamName)} />
@@ -70,7 +73,8 @@ function Card({groupTeamName}) {
                         <span 
                            
                         onClick={(event) => {
-                            navigate("/calendar");    
+                            event.stopPropagation();
+                            navigate(`/calendar/${classId}`);    
                         }}       
 
                         style={{

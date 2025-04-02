@@ -1,14 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from '../components/Card';
 import { Box } from '@mui/material';
 import ToggleSection from '../components/ToggleSection';
 import AddGroupButton from '../components/AddGroupButton';
 
 function GroupsPage() {
-  const groupTeamName_1 = "Browse through the icons below to find the one you need";
-  const groupTeamName_2 = "The search field supports synonyms—for example, try searching for hamburger";
-  const groupTeamName_3 = "18 matching results";
-  const groupTeamName_4 = "2,100+ ready-to-use React Material Icons from the official website.";
+  const [classes, setClasses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/classes');
+        if (!response.ok) {
+          throw new Error('Không thể kết nối đến máy chủ');
+        }
+        const data = await response.json();
+        setClasses(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Lỗi khi tải dữ liệu lớp học:', error);
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchClasses();
+  }, []);
 
   return (
     <Box sx={{ padding: 3, position: 'relative' }}>
@@ -17,10 +36,19 @@ function GroupsPage() {
       </Box>
       
       <ToggleSection label="Classes">
-        <Card groupTeamName={groupTeamName_1}></Card>
-        <Card groupTeamName={groupTeamName_2}></Card>
-        <Card groupTeamName={groupTeamName_3}></Card>
-        <Card groupTeamName={groupTeamName_4}></Card>
+        {loading ? (
+          <Box>Đang tải dữ liệu lớp học...</Box>
+        ) : error ? (
+          <Box>Lỗi: {error}</Box>
+        ) : (
+          classes.map(classItem => (
+            <Card 
+              key={classItem.id} 
+              groupTeamName={classItem.name} 
+              classId={classItem.id}
+            ></Card>
+          ))
+        )}
       </ToggleSection>
 
       <ToggleSection label="Hidden">

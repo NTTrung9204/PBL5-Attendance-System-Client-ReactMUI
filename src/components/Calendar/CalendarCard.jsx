@@ -55,7 +55,7 @@ const styles = {
   },
 };
 
-function CalendarCard({ date, status, present, total, startTime }) {
+function CalendarCard({ date, status, endTime, total, startTime, lessonId }) {
   const navigate = useNavigate()
   return (
     <Box sx={{
@@ -66,7 +66,7 @@ function CalendarCard({ date, status, present, total, startTime }) {
           boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)'
         }
       }}
-      onClick={() => navigate('/calendar/attendance')}
+      onClick={() => navigate(`/calendar/attendance/${lessonId}`)}
       >
       {/* Hàng 1: Date & Status */}
       <Box style={styles.row}>
@@ -77,17 +77,15 @@ function CalendarCard({ date, status, present, total, startTime }) {
         <Typography style={styles.statusBox(status)}>{status}</Typography>
       </Box>
 
-      {/* Hàng 2: Start Time & Present/Total */}
+      {/* Hàng 2: Start Time & End Time */}
       <Box style={styles.subContainer}>
         <Box style={styles.boxItem}>
           <Typography variant="body2">Start Time</Typography>
           <Typography variant="h6">{startTime}</Typography>
         </Box>
         <Box style={styles.boxItem}>
-          <Typography variant="body2">Present</Typography>
-          <Typography variant="h6">
-            {present}/{total}
-          </Typography>
+          <Typography variant="body2">End time</Typography>
+          <Typography variant="h6">{endTime}</Typography>
         </Box>
       </Box>
     </Box>

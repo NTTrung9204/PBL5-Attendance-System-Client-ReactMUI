@@ -11,41 +11,157 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import FilterIcon from '@mui/icons-material/Filter';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 export default function AttendancePage() {
+    const location = useLocation();
+    const navigate = useNavigate();
+    
+    // Lấy lessonId từ URL bằng cách lấy tham số cuối cùng
+    const pathParts = location.pathname.split('/');
+    const lessonId = pathParts[pathParts.length - 1];
+    console.log("URL path:", location.pathname);
+    console.log("Extracted lessonId:", lessonId);
+    
+    const [lessonData, setLessonData] = useState(null);
+    const [classData, setClassData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [students, setStudents] = useState([]);
+    const [error, setError] = useState(null);
 
-    const AttendanceData = {
+    useEffect(() => {
+        console.log("URL path trong useEffect:", location.pathname);
+        console.log("Extracted lessonId trong useEffect:", lessonId);
+        
+        // Kiểm tra xem có lessonId từ URL không
+        if (!lessonId) {
+            console.error('Không tìm thấy lessonId trong URL');
+            setError('Không tìm thấy ID bài học trong URL');
+            setLoading(false);
+            return;
+        }
+        
+        const fetchLessonData = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/lessons/${lessonId}`);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('Không tìm thấy bài học với ID đã cung cấp');
+                    }
+                    throw new Error('Không thể kết nối đến máy chủ');
+                }
+                const data = await response.json();
+                setLessonData(data);
+                
+                // Sau khi có lesson data, lấy thông tin về class
+                return data.classId;
+            } catch (error) {
+                console.error('Lỗi khi tải dữ liệu bài học:', error);
+                setError(error.message);
+                return null;
+            }
+        };
+
+        const fetchClassData = async (classId) => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/classes/lesson/${lessonId}`);
+                if (!response.ok) {
+                    throw new Error('Không thể kết nối đến máy chủ');
+                }
+                const data = await response.json();
+                setClassData(data);
+                
+                // Trả về class ID để fetch students
+                return data.id;
+            } catch (error) {
+                console.error('Lỗi khi tải dữ liệu lớp học:', error);
+                setError(error.message);
+                return null;
+            }
+        };
+
+        const fetchStudents = async (classId) => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/classes/${classId}/students`);
+                if (!response.ok) {
+                    throw new Error('Không thể kết nối đến máy chủ');
+                }
+                const data = await response.json();
+                
+                // Thêm state và time mặc định cho mỗi sinh viên
+                const studentsWithAttendance = data.map(student => ({
+                    ...student,
+                    state: false, // Absent là mặc định
+                    time: "--"
+                }));
+                
+                setStudents(studentsWithAttendance);
+                setLoading(false);
+            } catch (error) {
+                console.error('Lỗi khi tải dữ liệu sinh viên:', error);
+                setError(error.message);
+                setLoading(false);
+            }
+        };
+
+        const loadAllData = async () => {
+            const classId = await fetchLessonData();
+            if (classId) {
+                const confirmedClassId = await fetchClassData(classId);
+                if (confirmedClassId) {
+                    await fetchStudents(confirmedClassId);
+                } else {
+                    setLoading(false);
+                }
+            } else {
+                setLoading(false);
+            }
+        };
+
+        loadAllData();
+    }, [lessonId]);
+
+    const AttendanceData = lessonData || {
         date: "March 03 2023",
-        time: "08:30:00",
+        startTime: "08:30:00",
+        endTime: "10:00:00",
     }
 
-    const ListStudentAttendance = [
-        { name: "Le Trung Phong", state: true, time: "08:15:00" },
-        { name: "Nguyen Thanh Trung", state: true, time: "08:15:00" },
-        { name: "Tran Xuan Tai", state: true, time: "08:15:00" },
-        { name: "Duong Quang Minh Hoang", state: true, time: "08:45:00" },
-        { name: "Vo Thanh Tu", state: false, time: null },
-        { name: "Nguyen Minhh Phuc", state: false, time: null },
-        { name: "Ngo Van Quoc Khanh", state: true, time: "08:20:00" },
-        { name: "Ha Van Khanh Dat", state: true, time: "08:50:00" },
-        { name: "Le Nguyen Ai Tran", state: true, time: "9:00 AM" },
-        { name: "Vo Thi Quynh Nga", state: false, time: null },
-        { name: "Vo Thi Quynh Nga", state: false, time: null },
-        { name: "Vo Thi Quynh Nga", state: false, time: null },
-        { name: "Vo Thi Quynh Nga", state: false, time: null },
-        { name: "Vo Thi Quynh Nga", state: false, time: null },
-        { name: "Vo Thi Quynh Nga", state: false, time: null },
-        { name: "Vo Thi Quynh Nga", state: false, time: null },
-    ]
+    if (error) {
+        return (
+            <Box sx={{ padding: "40px", textAlign: "center" }}>
+                <Typography variant="h5" color="error" gutterBottom>
+                    {error}
+                </Typography>
+                <Button 
+                    variant="contained" 
+                    color="primary" 
+                    onClick={() => navigate('/calendar')}
+                    sx={{ mt: 2 }}
+                >
+                    Quay lại lịch học
+                </Button>
+            </Box>
+        );
+    }
+
+    if (loading) {
+        return (
+            <Box sx={{ padding: "40px", textAlign: "center" }}>
+                <Typography>Đang tải dữ liệu...</Typography>
+            </Box>
+        );
+    }
 
     return (
         <Box sx={styles.container}>
             <Box sx={styles.information}>
                 <Typography sx={styles.information__title}>Attendance</Typography>
                 <Box sx={{ display: "flex", gap: "20px" }}>
-                    <Typography sx={styles.information__item}><CalendarMonthIcon sx={styles.information__item__icon}/>{ AttendanceData.date }</Typography>
+                    <Typography sx={styles.information__item}><CalendarMonthIcon sx={styles.information__item__icon}/>{ lessonData?.lessonDate || AttendanceData.date }</Typography>
                     {" / "}
-                    <Typography sx={styles.information__item}><ScheduleIcon sx={styles.information__item__icon}/> { AttendanceData.time }</Typography>
+                    <Typography sx={styles.information__item}><ScheduleIcon sx={styles.information__item__icon}/> { lessonData?.startTime || AttendanceData.startTime } - { lessonData?.endTime || AttendanceData.endTime }</Typography>
                 </Box>
             </Box>
             <Box sx={{ display: "flex", gap: "20px" }}>
@@ -55,15 +171,15 @@ export default function AttendancePage() {
                         <Box sx={styles.statistic__item__parameter}>
                             <Box sx={styles.parameter}>
                                 <Typography sx={styles.parameter__title}>N-Students</Typography>
-                                <Typography sx={styles.parameter__number}>{ ListStudentAttendance.length }</Typography>
+                                <Typography sx={styles.parameter__number}>{ students.length }</Typography>
                             </Box>
                             <Box sx={styles.parameter}>
                                 <Typography sx={styles.parameter__title}>Present</Typography>
-                                <Typography sx={styles.parameter__number}>{ ListStudentAttendance.filter(item => item.state == true).length }</Typography>
+                                <Typography sx={styles.parameter__number}>{ students.filter(item => item.state == true).length }</Typography>
                             </Box>
                             <Box sx={styles.parameter}>
                                 <Typography sx={styles.parameter__title}>Absent</Typography>
-                                <Typography sx={styles.parameter__number}>{ ListStudentAttendance.filter(item => item.state == false).length }</Typography>
+                                <Typography sx={styles.parameter__number}>{ students.filter(item => item.state == false).length }</Typography>
                             </Box>
                         </Box>
                     </Box>
@@ -72,15 +188,15 @@ export default function AttendancePage() {
                         <Box sx={styles.statistic__item__parameter}>
                             <Box sx={styles.parameter}>
                                 <Typography sx={styles.parameter__title}>Attendance</Typography>
-                                <Typography sx={styles.parameter__number}>{ ListStudentAttendance.filter(item => item.state == true).length }</Typography>
+                                <Typography sx={styles.parameter__number}>{ students.filter(item => item.state == true).length }</Typography>
                             </Box>
                             <Box sx={styles.parameter}>
                                 <Typography sx={styles.parameter__title}>Early Clock In</Typography>
-                                <Typography sx={styles.parameter__number}>{ ListStudentAttendance.filter(item => item.state == true && item.time <= AttendanceData.time).length }</Typography>
+                                <Typography sx={styles.parameter__number}>{ students.filter(item => item.state == true && item.time <= (lessonData?.startTime || AttendanceData.startTime)).length }</Typography>
                             </Box>
                             <Box sx={styles.parameter}>
                                 <Typography sx={styles.parameter__title}>Late Clock In</Typography>
-                                <Typography sx={styles.parameter__number}>{ ListStudentAttendance.filter(item => item.state == true && item.time > AttendanceData.time).length }</Typography>
+                                <Typography sx={styles.parameter__number}>{ students.filter(item => item.state == true && item.time > (lessonData?.startTime || AttendanceData.startTime)).length }</Typography>
                             </Box>
                         </Box>
                     </Box>
@@ -98,16 +214,16 @@ export default function AttendancePage() {
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {ListStudentAttendance.map((row) => (
+                        {students.map((row, index) => (
                             <TableRow
-                                // key={}
+                                key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
                                     {row.name}
                                 </TableCell>
                                 <TableCell align="right">
-                                    {row.state == true ? <>{row.time > AttendanceData.time && <span style={{ color: "#8470FF" }}>Late{" / "}</span>}<span style={{color: "#00CC33", fontSize: "13px"}}>Attendance</span></> : <Typography sx={{color: "#FA8072", fontSize: "13px"}}>Absent</Typography>}
+                                    {row.state == true ? <>{row.time > (lessonData?.startTime || AttendanceData.startTime) ? <span style={{ color: "#8470FF", fontSize: "13px" }}>Late</span> : <span style={{color: "#00CC33", fontSize: "13px"}}>Attendance</span>}</> : <Typography sx={{color: "#FA8072", fontSize: "13px"}}>Absent</Typography>}
                                 </TableCell>
                                 <TableCell align="right">{row.time}</TableCell>
                                 <TableCell align="right">{row.state == true && <Button sx={{ fontSize: "12px" }} color="secondary"><FilterIcon/></Button>}</TableCell>

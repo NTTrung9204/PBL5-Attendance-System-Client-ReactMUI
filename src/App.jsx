@@ -41,7 +41,7 @@ function App() {
               <Route path="/chats/*" element={<Chat />} />
               <Route path="/class/*" element={<HomeClass />} />
               <Route path="/calendar/*" element={<CalendarPage />} />
-              <Route path="/calendar/attendance" element={<AttendancePage />} />
+              <Route path="/calendar/attendance/*" element={<AttendancePage />} />
             </Routes>
           </Box>
         </Box>
