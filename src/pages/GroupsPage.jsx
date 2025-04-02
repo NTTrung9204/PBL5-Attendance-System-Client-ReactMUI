@@ -2,6 +2,7 @@ import React from 'react';
 import Card from '../components/Card';
 import { Box } from '@mui/material';
 import ToggleSection from '../components/ToggleSection';
+import AddGroupButton from '../components/AddGroupButton';
 
 function GroupsPage() {
   const groupTeamName_1 = "Browse through the icons below to find the one you need";
@@ -10,7 +11,11 @@ function GroupsPage() {
   const groupTeamName_4 = "2,100+ ready-to-use React Material Icons from the official website.";
 
   return (
-    <Box sx={{ padding: 3 }}>
+    <Box sx={{ padding: 3, position: 'relative' }}>
+      <Box sx={{ position: 'absolute', top: 16, right: 24 }}>
+        <AddGroupButton />
+      </Box>
+      
       <ToggleSection label="Classes">
         <Card groupTeamName={groupTeamName_1}></Card>
         <Card groupTeamName={groupTeamName_2}></Card>
