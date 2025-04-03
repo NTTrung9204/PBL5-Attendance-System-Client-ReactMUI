@@ -94,12 +94,50 @@ export default function AttendancePage() {
                 const data = await response.json();
                 console.log("Dữ liệu sinh viên nhận được:", data);
                 
-                // Thêm state và time mặc định cho mỗi sinh viên
-                const studentsWithAttendance = data.map(student => ({
+                // Tạo mảng sinh viên với thông tin cơ bản
+                const studentsWithBasicInfo = data.map(student => ({
                     ...student,
-                    state: false, // Absent là mặc định
-                    time: "--"
+                    state: false, // Giá trị mặc định
+                    time: "--",
+                    imgPath: ""
                 }));
+                
+                // Lấy thông tin điểm danh cho từng sinh viên
+                const studentsWithAttendance = await Promise.all(
+                    studentsWithBasicInfo.map(async (student) => {
+                        try {
+                            const attendanceResponse = await fetch('http://localhost:8080/api/attendance/get_status', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    lessonId: parseInt(lessonId),
+                                    studentId: student.id
+                                })
+                            });
+                            
+                            if (!attendanceResponse.ok) {
+                                console.error(`Lỗi khi lấy trạng thái điểm danh cho sinh viên ${student.id}`);
+                                return student;
+                            }
+                            
+                            const attendanceData = await attendanceResponse.json();
+                            console.log(`Dữ liệu điểm danh của sinh viên ${student.id}:`, attendanceData);
+                            
+                            // Cập nhật trạng thái điểm danh
+                            return {
+                                ...student,
+                                state: attendanceData.checkinDate !== null,
+                                time: attendanceData.checkinDate ? new Date(attendanceData.checkinDate).toLocaleTimeString() : "--",
+                                imgPath: attendanceData.imgPath || ""
+                            };
+                        } catch (error) {
+                            console.error(`Lỗi khi xử lý dữ liệu điểm danh cho sinh viên ${student.id}:`, error);
+                            return student;
+                        }
+                    })
+                );
                 
                 setStudents(studentsWithAttendance);
                 setLoading(false);
