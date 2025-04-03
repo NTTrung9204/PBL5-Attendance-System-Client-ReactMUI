@@ -13,7 +13,9 @@ function CalendarPage() {
     const fetchLessons = async () => {
       try {
         // Lấy classId từ URL, nếu không có thì mặc định là 1
-        const id = classId || 1;
+        // Lấy classId từ URL bằng cách lấy tham số cuối cùng
+        const pathParts = window.location.pathname.split('/');
+        const id = classId || pathParts[pathParts.length - 1];
         const response = await fetch(`http://localhost:8080/api/lessons/class/${id}`);
         
         if (!response.ok) {
@@ -21,6 +23,7 @@ function CalendarPage() {
         }
         
         const data = await response.json();
+        console.log("Dữ liệu lịch học nhận được:", data);
         setLessons(data);
         setLoading(false);
       } catch (error) {

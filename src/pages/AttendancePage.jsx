@@ -21,7 +21,6 @@ export default function AttendancePage() {
     // Lấy lessonId từ URL bằng cách lấy tham số cuối cùng
     const pathParts = location.pathname.split('/');
     const lessonId = pathParts[pathParts.length - 1];
-    console.log("URL path:", location.pathname);
     console.log("Extracted lessonId:", lessonId);
     
     const [lessonData, setLessonData] = useState(null);
@@ -31,7 +30,6 @@ export default function AttendancePage() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        console.log("URL path trong useEffect:", location.pathname);
         console.log("Extracted lessonId trong useEffect:", lessonId);
         
         // Kiểm tra xem có lessonId từ URL không
@@ -53,9 +51,9 @@ export default function AttendancePage() {
                 }
                 const data = await response.json();
                 setLessonData(data);
-                
-                // Sau khi có lesson data, lấy thông tin về class
-                return data.classId;
+                // console.log("Dữ liệu bài học nhận được:", data);
+                // // Sau khi có lesson data, lấy thông tin về class
+                return data.class_id;
             } catch (error) {
                 console.error('Lỗi khi tải dữ liệu bài học:', error);
                 setError(error.message);
@@ -71,9 +69,9 @@ export default function AttendancePage() {
                 }
                 const data = await response.json();
                 setClassData(data);
-                
+                console.log("Dữ liệu bài học nhận được:", data);
                 // Trả về class ID để fetch students
-                return data.id;
+                return data.class_id;
             } catch (error) {
                 console.error('Lỗi khi tải dữ liệu lớp học:', error);
                 setError(error.message);
@@ -83,11 +81,18 @@ export default function AttendancePage() {
 
         const fetchStudents = async (classId) => {
             try {
+                console.log("Đang cố gắng lấy dữ liệu sinh viên với classId:", classId);
+                if (!classId) {
+                    console.error("classId không tồn tại hoặc không hợp lệ:", classId);
+                    throw new Error('Không tìm thấy ID lớp học');
+                }
+                
                 const response = await fetch(`http://localhost:8080/api/classes/${classId}/students`);
                 if (!response.ok) {
                     throw new Error('Không thể kết nối đến máy chủ');
                 }
                 const data = await response.json();
+                console.log("Dữ liệu sinh viên nhận được:", data);
                 
                 // Thêm state và time mặc định cho mỗi sinh viên
                 const studentsWithAttendance = data.map(student => ({
@@ -107,13 +112,10 @@ export default function AttendancePage() {
 
         const loadAllData = async () => {
             const classId = await fetchLessonData();
+            console.log("Class ID:", classId);
             if (classId) {
-                const confirmedClassId = await fetchClassData(classId);
-                if (confirmedClassId) {
-                    await fetchStudents(confirmedClassId);
-                } else {
-                    setLoading(false);
-                }
+                await fetchClassData(classId);
+                await fetchStudents(classId);
             } else {
                 setLoading(false);
             }
@@ -127,6 +129,16 @@ export default function AttendancePage() {
         startTime: "08:30:00",
         endTime: "10:00:00",
     }
+
+    // Hàm định dạng ngày từ chuỗi ISO
+    const formatDate = (dateString) => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = date.toLocaleString('vi-VN', { month: 'long' });
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    };
 
     if (error) {
         return (
@@ -159,7 +171,7 @@ export default function AttendancePage() {
             <Box sx={styles.information}>
                 <Typography sx={styles.information__title}>Attendance</Typography>
                 <Box sx={{ display: "flex", gap: "20px" }}>
-                    <Typography sx={styles.information__item}><CalendarMonthIcon sx={styles.information__item__icon}/>{ lessonData?.lessonDate || AttendanceData.date }</Typography>
+                    <Typography sx={styles.information__item}><CalendarMonthIcon sx={styles.information__item__icon}/>{ lessonData?.lessonDate ? formatDate(lessonData.lessonDate) : AttendanceData.date }</Typography>
                     {" / "}
                     <Typography sx={styles.information__item}><ScheduleIcon sx={styles.information__item__icon}/> { lessonData?.startTime || AttendanceData.startTime } - { lessonData?.endTime || AttendanceData.endTime }</Typography>
                 </Box>
