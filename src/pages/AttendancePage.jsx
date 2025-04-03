@@ -21,7 +21,6 @@ export default function AttendancePage() {
     // Lấy lessonId từ URL bằng cách lấy tham số cuối cùng
     const pathParts = location.pathname.split('/');
     const lessonId = pathParts[pathParts.length - 1];
-    console.log("Extracted lessonId:", lessonId);
     
     const [lessonData, setLessonData] = useState(null);
     const [classData, setClassData] = useState(null);
@@ -29,8 +28,73 @@ export default function AttendancePage() {
     const [students, setStudents] = useState([]);
     const [error, setError] = useState(null);
 
+    const fetchStudentsAttendance = async (classId) => {
+        try {
+            if (!classId) {
+                console.error("classId không tồn tại hoặc không hợp lệ:", classId);
+                throw new Error('Không tìm thấy ID lớp học');
+            }
+            
+            const response = await fetch(`http://localhost:8080/api/classes/${classId}/students`);
+            if (!response.ok) {
+                throw new Error('Không thể kết nối đến máy chủ');
+            }
+            const data = await response.json();
+            
+            // Tạo mảng sinh viên với thông tin cơ bản
+            const studentsWithBasicInfo = data.map(student => ({
+                ...student,
+                state: false, // Giá trị mặc định
+                time: "--",
+                imgPath: ""
+            }));
+            
+            // Lấy thông tin điểm danh cho từng sinh viên
+            const studentsWithAttendance = await Promise.all(
+                studentsWithBasicInfo.map(async (student) => {
+                    try {
+                        const attendanceResponse = await fetch('http://localhost:8080/api/attendance/get_status', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                lessonId: parseInt(lessonId),
+                                studentId: student.id
+                            })
+                        });
+                        
+                        if (!attendanceResponse.ok) {
+                            console.error(`Lỗi khi lấy trạng thái điểm danh cho sinh viên ${student.id}`);
+                            return student;
+                        }
+                        
+                        const attendanceData = await attendanceResponse.json();
+                        
+                        // Cập nhật trạng thái điểm danh
+                        return {
+                            ...student,
+                            state: attendanceData.checkinDate !== null,
+                            time: attendanceData.checkinDate ? new Date(attendanceData.checkinDate).toLocaleTimeString() : "--",
+                            imgPath: attendanceData.imgPath || ""
+                        };
+                    } catch (error) {
+                        console.error(`Lỗi khi xử lý dữ liệu điểm danh cho sinh viên ${student.id}:`, error);
+                        return student;
+                    }
+                })
+            );
+            
+            setStudents(studentsWithAttendance);
+            setLoading(false);
+        } catch (error) {
+            console.error('Lỗi khi tải dữ liệu sinh viên:', error);
+            setError(error.message);
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        console.log("Extracted lessonId trong useEffect:", lessonId);
         
         // Kiểm tra xem có lessonId từ URL không
         if (!lessonId) {
@@ -50,7 +114,6 @@ export default function AttendancePage() {
                     throw new Error('Không thể kết nối đến máy chủ');
                 }
                 const data = await response.json();
-                setLessonData(data);
                 // console.log("Dữ liệu bài học nhận được:", data);
                 // // Sau khi có lesson data, lấy thông tin về class
                 return data.class_id;
@@ -68,8 +131,16 @@ export default function AttendancePage() {
                     throw new Error('Không thể kết nối đến máy chủ');
                 }
                 const data = await response.json();
+                console.log("Dữ liệu lớp học nhận được:", data);
+                
+                // Vấn đề: setState là bất đồng bộ, không cập nhật state ngay lập tức
+                // Giải pháp: Sử dụng biến data trực tiếp thay vì classData
                 setClassData(data);
-                console.log("Dữ liệu bài học nhận được:", data);
+                
+                // Đây là lý do tại sao classData vẫn là null sau khi gọi setClassData
+                // React gom các cập nhật state và thực hiện chúng sau khi hàm này hoàn tất
+                console.log("Class data (từ biến cục bộ):", data);
+                
                 // Trả về class ID để fetch students
                 return data.class_id;
             } catch (error) {
@@ -79,88 +150,34 @@ export default function AttendancePage() {
             }
         };
 
-        const fetchStudents = async (classId) => {
-            try {
-                console.log("Đang cố gắng lấy dữ liệu sinh viên với classId:", classId);
-                if (!classId) {
-                    console.error("classId không tồn tại hoặc không hợp lệ:", classId);
-                    throw new Error('Không tìm thấy ID lớp học');
-                }
-                
-                const response = await fetch(`http://localhost:8080/api/classes/${classId}/students`);
-                if (!response.ok) {
-                    throw new Error('Không thể kết nối đến máy chủ');
-                }
-                const data = await response.json();
-                console.log("Dữ liệu sinh viên nhận được:", data);
-                
-                // Tạo mảng sinh viên với thông tin cơ bản
-                const studentsWithBasicInfo = data.map(student => ({
-                    ...student,
-                    state: false, // Giá trị mặc định
-                    time: "--",
-                    imgPath: ""
-                }));
-                
-                // Lấy thông tin điểm danh cho từng sinh viên
-                const studentsWithAttendance = await Promise.all(
-                    studentsWithBasicInfo.map(async (student) => {
-                        try {
-                            const attendanceResponse = await fetch('http://localhost:8080/api/attendance/get_status', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    lessonId: parseInt(lessonId),
-                                    studentId: student.id
-                                })
-                            });
-                            
-                            if (!attendanceResponse.ok) {
-                                console.error(`Lỗi khi lấy trạng thái điểm danh cho sinh viên ${student.id}`);
-                                return student;
-                            }
-                            
-                            const attendanceData = await attendanceResponse.json();
-                            console.log(`Dữ liệu điểm danh của sinh viên ${student.id}:`, attendanceData);
-                            
-                            // Cập nhật trạng thái điểm danh
-                            return {
-                                ...student,
-                                state: attendanceData.checkinDate !== null,
-                                time: attendanceData.checkinDate ? new Date(attendanceData.checkinDate).toLocaleTimeString() : "--",
-                                imgPath: attendanceData.imgPath || ""
-                            };
-                        } catch (error) {
-                            console.error(`Lỗi khi xử lý dữ liệu điểm danh cho sinh viên ${student.id}:`, error);
-                            return student;
-                        }
-                    })
-                );
-                
-                setStudents(studentsWithAttendance);
-                setLoading(false);
-            } catch (error) {
-                console.error('Lỗi khi tải dữ liệu sinh viên:', error);
-                setError(error.message);
-                setLoading(false);
-            }
-        };
-
         const loadAllData = async () => {
             const classId = await fetchLessonData();
-            console.log("Class ID:", classId);
             if (classId) {
                 await fetchClassData(classId);
-                await fetchStudents(classId);
+                await fetchStudentsAttendance(classId);
             } else {
                 setLoading(false);
             }
         };
 
         loadAllData();
-    }, [lessonId]);
+
+        // Thiết lập interval để cập nhật trạng thái điểm danh mỗi 2 giây
+        const intervalId = setInterval(() => {
+            console.log("Interval đang chạy mỗi 2 giây - Thời gian hiện tại:", new Date().toLocaleTimeString());
+            console.log("Class data:", classData);
+            if (classData?.id) {
+                console.log("Đang cập nhật trạng thái điểm danh...");
+                fetchStudentsAttendance(classData.id);
+            }
+        }, 2000);
+
+        // Xóa interval khi component unmount
+        return () => {
+            console.log("Đang xóa interval");
+            clearInterval(intervalId);
+        };
+    }, [lessonId, classData?.id ]);
 
     const AttendanceData = lessonData || {
         date: "March 03 2023",
@@ -273,7 +290,7 @@ export default function AttendancePage() {
                                     {row.name}
                                 </TableCell>
                                 <TableCell align="right">
-                                    {row.state == true ? <>{row.time > (lessonData?.startTime || AttendanceData.startTime) ? <span style={{ color: "#8470FF", fontSize: "13px" }}>Late</span> : <span style={{color: "#00CC33", fontSize: "13px"}}>Attendance</span>}</> : <Typography sx={{color: "#FA8072", fontSize: "13px"}}>Absent</Typography>}
+                                    {row.state == true ? <span style={{color: "#00CC33", fontSize: "13px"}}>Attended</span> : <Typography sx={{color: "#FA8072", fontSize: "13px"}}>Absent</Typography>}
                                 </TableCell>
                                 <TableCell align="right">{row.time}</TableCell>
                                 <TableCell align="right">{row.state == true && <Button sx={{ fontSize: "12px" }} color="secondary"><FilterIcon/></Button>}</TableCell>
