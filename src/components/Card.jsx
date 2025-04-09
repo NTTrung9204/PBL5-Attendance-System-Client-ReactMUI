@@ -32,6 +32,16 @@ function Card({groupTeamName, classId}) {
         },
     ]
 
+    // Tạo avatar props an toàn, kiểm tra nếu groupTeamName không tồn tại
+    const avatarData = stringAvatar(groupTeamName);
+    const avatarProps = {
+        sx: { 
+          bgcolor: avatarData.color,
+          width: 72,
+          height: 72
+        },
+        children: avatarData.initials
+      };
 
     return (
         <>
@@ -61,15 +71,15 @@ function Card({groupTeamName, classId}) {
                         width: "100%"
                     }}
                 >
-                    <Avatar  variant="rounded"
-                    
-                    onClick={(event) => {
-                        event.stopPropagation();
-                        navigate(`/calendar/${classId}`);
-                    }}    
-
-                    style={{ width: 72, height: 72 }} {...stringAvatar(groupTeamName)} />
-                    <Tooltip title={groupTeamName} arrow>
+                    <Avatar  
+                        variant="rounded"
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            navigate(`/calendar/${classId}`);
+                        }}    
+                        {...avatarProps} 
+                    />
+                    <Tooltip title={groupTeamName || "Không có tên"} arrow>
                         <span 
                            
                         onClick={(event) => {
@@ -84,7 +94,7 @@ function Card({groupTeamName, classId}) {
                             overflow: "hidden",
                             textOverflow: "ellipsis"
                         }}>
-                            {groupTeamName}
+                            {groupTeamName || "Không có tên"}
                         </span>
                     </Tooltip>
                     <MenuButton

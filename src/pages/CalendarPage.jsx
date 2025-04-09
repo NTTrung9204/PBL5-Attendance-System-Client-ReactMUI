@@ -16,7 +16,9 @@ function CalendarPage() {
         // Lấy classId từ URL bằng cách lấy tham số cuối cùng
         const pathParts = window.location.pathname.split('/');
         const id = classId || pathParts[pathParts.length - 1];
-        const response = await fetch(`http://localhost:8080/api/lessons/class/${id}`);
+        const response = await fetch(`http://localhost:8080/api/lessons/class/${id}`, {
+          credentials: 'include'
+        });
         
         if (!response.ok) {
           throw new Error('Không thể kết nối đến máy chủ');
@@ -49,17 +51,20 @@ function CalendarPage() {
     const [endHours, endMinutes] = endTime.split(':').map(Number);
     lessonEndDateTime.setHours(endHours, endMinutes, 0);
     
+    console.log(currentDateTime)
+    console.log(lessonStartDateTime)
+    console.log(lessonEndDateTime)
     if (isCompleted) {
-      return 'Passed';
+      return 'Đã kết thúc';
     } else if (
       currentDateTime >= lessonStartDateTime && 
       currentDateTime <= lessonEndDateTime
     ) {
-      return 'Now';
+      return 'Đang diễn ra';
     } else if (currentDateTime > lessonEndDateTime) {
-      return 'Passed';
+      return 'Đã kết thúc';
     } else {
-      return 'Pending';
+      return 'Sắp diễn ra';
     }
   };
 

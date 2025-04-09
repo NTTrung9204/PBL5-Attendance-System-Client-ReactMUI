@@ -17,10 +17,16 @@ export function stringToColor(string) {
 }
 
 export function stringAvatar(name) {
+  if (!name || typeof name !== 'string') {
     return {
-      sx: {
-        bgcolor: stringToColor(name),
-      },
-      children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+      color: '#000000', // fallback color
     };
   }
+
+  const initials = name.split(' ').map(part => part[0]).join('').substring(0, 2).toUpperCase();
+
+  return {
+    color: stringToColor(name), // bạn có thể có hàm này riêng để tạo màu
+    initials: initials || '?'
+  };
+}

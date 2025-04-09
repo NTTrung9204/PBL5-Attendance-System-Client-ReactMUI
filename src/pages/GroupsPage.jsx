@@ -9,30 +9,33 @@ function GroupsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchClasses = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/api/classes');
-        if (!response.ok) {
-          throw new Error('Không thể kết nối đến máy chủ');
-        }
-        const data = await response.json();
-        setClasses(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Lỗi khi tải dữ liệu lớp học:', error);
-        setError(error.message);
-        setLoading(false);
+  const fetchClasses = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/classes', {
+        credentials: 'include'
+      });
+      if (!response.ok) {
+        throw new Error('Không thể kết nối đến máy chủ');
       }
-    };
+      const data = await response.json();
+      setClasses(data);
+      setLoading(false);
+      console.log(data);
+    } catch (error) {
+      console.error('Lỗi khi tải dữ liệu lớp học:', error);
+      setError(error.message);
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchClasses();
   }, []);
 
   return (
     <Box sx={{ padding: 3, position: 'relative' }}>
       <Box sx={{ position: 'absolute', top: 16, right: 24 }}>
-        <AddGroupButton />
+        <AddGroupButton onClassAdded={fetchClasses} />
       </Box>
       
       <ToggleSection label="Classes">
@@ -43,16 +46,15 @@ function GroupsPage() {
         ) : (
           classes.map(classItem => (
             <Card 
-              key={classItem.id} 
-              groupTeamName={classItem.name} 
+              key={classItem.id}
+              groupTeamName={classItem.name || "Lớp học không có tên"} 
               classId={classItem.id}
-            ></Card>
+            />
           ))
         )}
       </ToggleSection>
 
       <ToggleSection label="Hidden">
-
       </ToggleSection>
     </Box>
   );

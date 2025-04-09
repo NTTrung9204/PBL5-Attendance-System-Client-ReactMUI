@@ -35,7 +35,9 @@ export default function AttendancePage() {
                 throw new Error('Không tìm thấy ID lớp học');
             }
             
-            const response = await fetch(`http://localhost:8080/api/classes/${classId}/students`);
+            const response = await fetch(`http://localhost:8080/api/classes/${classId}/students`, {
+                credentials: 'include'
+            });
             if (!response.ok) {
                 throw new Error('Không thể kết nối đến máy chủ');
             }
@@ -61,7 +63,8 @@ export default function AttendancePage() {
                             body: JSON.stringify({
                                 lessonId: parseInt(lessonId),
                                 studentId: student.id
-                            })
+                            }),
+                            credentials: 'include'
                         });
                         
                         if (!attendanceResponse.ok) {
@@ -106,7 +109,9 @@ export default function AttendancePage() {
         
         const fetchLessonData = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/lessons/${lessonId}`);
+                const response = await fetch(`http://localhost:8080/api/lessons/${lessonId}`, {
+                    credentials: 'include'
+                });
                 if (!response.ok) {
                     if (response.status === 404) {
                         throw new Error('Không tìm thấy bài học với ID đã cung cấp');
@@ -126,7 +131,9 @@ export default function AttendancePage() {
 
         const fetchClassData = async (classId) => {
             try {
-                const response = await fetch(`http://localhost:8080/api/classes/lesson/${lessonId}`);
+                const response = await fetch(`http://localhost:8080/api/classes/lesson/${lessonId}`, {
+                    credentials: 'include'
+                });
                 if (!response.ok) {
                     throw new Error('Không thể kết nối đến máy chủ');
                 }

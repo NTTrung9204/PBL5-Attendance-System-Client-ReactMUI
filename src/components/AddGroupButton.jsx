@@ -1,9 +1,8 @@
 import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControl, FormGroup, FormControlLabel, Checkbox, Typography, IconButton, Grid } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from "react";
-import axios from 'axios';
 
-function AddGroupButton() {
+function AddGroupButton({ onClassAdded }) {
     const [open, setOpen] = useState(false);
     const [className, setClassName] = useState("");
     const [weekCount, setWeekCount] = useState("");
@@ -55,7 +54,6 @@ function AddGroupButton() {
     const handleSubmit = async () => {
         try {
             setIsSubmitting(true);
-            // Xử lý dữ liệu khi submit form
             const selectedDaysWithTime = {};
             Object.keys(selectedDays).forEach(day => {
                 if (selectedDays[day]) {
@@ -64,21 +62,35 @@ function AddGroupButton() {
             });
 
             const newClass = {
-                className,
-                weekCount: parseInt(weekCount),
+                name: className,
+                numberOfWeeks: parseInt(weekCount),
                 schedule: selectedDaysWithTime
             };
             
-            // Gửi API để tạo lớp học mới
-            const response = await axios.post('/class/', newClass);
-            console.log("Lớp học đã được tạo:", response.data);
+            const response = await fetch('http://localhost:8080/api/classes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newClass),
+                credentials: 'include'
+            });
             
-            // Đóng modal và reset form
+            if (!response.ok) {
+                throw new Error('Không thể tạo lớp học');
+            }
+            
+            const data = await response.json();
+            console.log("Lớp học đã được tạo:", data);
+            
             handleClose();
             resetForm();
+            
+            if (onClassAdded) {
+                onClassAdded();
+            }
         } catch (error) {
             console.error("Lỗi khi tạo lớp học:", error);
-            // Có thể thêm xử lý lỗi ở đây (hiển thị thông báo lỗi)
         } finally {
             setIsSubmitting(false);
         }
@@ -216,6 +228,9 @@ function AddGroupButton() {
                                                         InputLabelProps={{ shrink: true }}
                                                         fullWidth
                                                         size="small"
+                                                        inputProps={{
+                                                            step: 300
+                                                        }}
                                                     />
                                                 </Grid>
                                                 <Grid item xs={6}>
@@ -227,6 +242,9 @@ function AddGroupButton() {
                                                         InputLabelProps={{ shrink: true }}
                                                         fullWidth
                                                         size="small"
+                                                        inputProps={{
+                                                            step: 300
+                                                        }}
                                                     />
                                                 </Grid>
                                             </Grid>
