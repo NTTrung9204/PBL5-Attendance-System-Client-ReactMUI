@@ -18,6 +18,19 @@ function SideBarClass() {
         setAnchorEl(null);
     };
 
+    const handleLogout = async () => {
+        // try {
+        //     await fetch('http://localhost:8080/signout', {
+        //         method: 'POST',
+        //         credentials: 'include'
+        //     });
+        //     navigate('/');
+        // } catch (error) {
+        //     console.error('Lỗi đăng xuất:', error);
+        // }
+        handleClose();
+    };
+
     return (
         <Box sx={{ ...styles.container, padding: "20px" }}>
             <Button sx={styles.back} onClick={() => navigate("/groups")}>
@@ -53,7 +66,7 @@ function SideBarClass() {
                 >
                     <MenuItem onClick={handleClose}>Profile</MenuItem>
                     <MenuItem onClick={handleClose}>My account</MenuItem>
-                    <MenuItem onClick={handleClose}>Logout</MenuItem>
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
             </Box>
             <Box>

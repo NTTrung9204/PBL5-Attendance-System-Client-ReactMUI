@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import Card from '../components/Card';
 import { Box } from '@mui/material';
 import ToggleSection from '../components/ToggleSection';
-import AddGroupButton from '../components/AddGroupButton';
+import FindGroupButton from '../components/FindGroupButton';
 
-function GroupsPage() {
+function StudentGroupsPage() {
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchClasses = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/classes/teacher/my-classes', {
+      const response = await fetch('http://localhost:8080/api/classes/student/my-classes', {
         credentials: 'include'
       });
       if (!response.ok) {
@@ -34,10 +34,7 @@ function GroupsPage() {
 
   return (
     <Box sx={{ padding: 3, position: 'relative' }}>
-      <Box sx={{ position: 'absolute', top: 16, right: 24 }}>
-        <AddGroupButton onClassAdded={fetchClasses} />
-      </Box>
-      
+      <FindGroupButton />
       <ToggleSection label="Classes">
         {loading ? (
           <Box>Đang tải dữ liệu lớp học...</Box>
@@ -60,4 +57,4 @@ function GroupsPage() {
   );
 }
 
-export default GroupsPage;
+export default StudentGroupsPage;

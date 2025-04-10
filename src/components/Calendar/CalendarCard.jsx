@@ -7,7 +7,8 @@ const styles = {
     border: "1px solid #ddd",
     borderRadius: "8px",
     padding: "16px",
-    width: "300px",
+    width: "90%", // Thay đổi từ width cố định sang phần trăm
+    maxWidth: "900px", // Thêm maxWidth để giới hạn độ rộng tối đa
     backgroundColor: "#fff",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
     cursor: 'pointer',
@@ -15,7 +16,6 @@ const styles = {
   row: {
     display: "flex",
     justifyContent: "space-between",
-
     marginLeft: '4px',
     marginRight: '4px',
     alignItems: "center",
@@ -30,6 +30,8 @@ const styles = {
     padding: "4px 12px",
     borderRadius: "15px",
     fontWeight: "bold",
+    minWidth: "80px",
+    textAlign: "center",
     color: "#333",
     fontSize: '14px',
     backgroundColor:
@@ -57,36 +59,44 @@ const styles = {
 
 function CalendarCard({ date, status, endTime, total, startTime, lessonId }) {
   const navigate = useNavigate()
+  
+  const handleClick = () => {
+    const roles = localStorage.getItem('roles');
+    if (roles && roles.includes('ROLE_TEACHER')) {
+      navigate(`/calendar/attendance/${lessonId}`);
+    }
+  }
+
   return (
     <Box sx={{
         ...styles.container,
         transition: 'transform 0.3s ease, box-shadow 0.3s ease',
         '&:hover': {
-          transform: 'translateY(-10px)',
+          transform: 'translateY(-5px)',
           boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)'
-        }
+        },
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        cursor: localStorage.getItem('roles')?.includes('ROLE_TEACHER') ? 'pointer' : 'default'
       }}
-      onClick={() => navigate(`/calendar/attendance/${lessonId}`)}
+      onClick={handleClick}
       >
-      {/* Hàng 1: Date & Status */}
-      <Box style={styles.row}>
-        <Box style={styles.dateContainer}>
-          <ScheduleIcon />
-          <Typography>{date}</Typography>
-        </Box>
-        <Typography style={styles.statusBox(status)}>{status}</Typography>
+      {/* Phần ngày và trạng thái */}
+      <Box style={{...styles.dateContainer, flex: 2}}>
+        <ScheduleIcon />
+        <Typography fontWeight="bold">{date}</Typography>
       </Box>
-
-      {/* Hàng 2: Start Time & End Time */}
-      <Box style={styles.subContainer}>
-        <Box style={styles.boxItem}>
-          <Typography variant="body2">Start Time</Typography>
-          <Typography variant="h6">{startTime}</Typography>
-        </Box>
-        <Box style={styles.boxItem}>
-          <Typography variant="body2">End time</Typography>
-          <Typography variant="h6">{endTime}</Typography>
-        </Box>
+      
+      {/* Phần thời gian */}
+      <Box style={{display: 'flex', flex: 2, justifyContent: 'center'}}>
+        <Typography variant="body1">{startTime} - {endTime}</Typography>
+      </Box>
+      
+      {/* Phần trạng thái */}
+      <Box style={{flex: 1, display: 'flex', justifyContent: 'flex-end'}}>
+        <Typography style={styles.statusBox(status)}>{status}</Typography>
       </Box>
     </Box>
   );

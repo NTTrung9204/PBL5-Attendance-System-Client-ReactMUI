@@ -38,41 +38,49 @@ function RegisterPage() {
             return;
         }
 
+        const registrationData = {
+            username,
+            password,
+            confirmPassword,
+            roles: [role],
+            name,
+            phone,
+            email
+        };
+
         try {
             const response = await fetch('http://localhost:8080/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    username,
-                    password,
-                    confirmPassword,
-                    roles: [role],
-                    name,
-                    phone,
-                    email
-                }),
+                body: JSON.stringify(registrationData),
             });
 
-            const data = await response.json();
-           
-            if (response.ok){
-                setSuccess(true);
-                setError('');
-                
+            if (!response.ok) {
+                const data = await response.json();
+                console.log(data);
+                throw new Error(data.message);
+            }
+
+            setSuccess(true);
+            setError('');
+
+            // Nếu là học sinh, lưu username và chuyển hướng
+            if (role === 'ROLE_STUDENT') {
+                localStorage.setItem('pendingFaceRegistration', username);
+                setTimeout(() => {
+                    navigate('/face-registration');
+                }, 2000);
+            } else {
+                // Nếu là giáo viên, chuyển hướng về login
                 setTimeout(() => {
                     navigate('/login');
                 }, 2000);
             }
-            else{
-                setError(data.message);
-            }
-
-            
-            
         } catch (error) {
-            console.log(error)
+            setError(error.message);
+            console.error('Lỗi đăng ký:', error);
         }
     };
 
@@ -92,7 +100,11 @@ function RegisterPage() {
                     </Typography>
                     
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-                    {success && <Alert severity="success" sx={{ mb: 2 }}>Đăng ký thành công! Đang chuyển hướng...</Alert>}
+                    {success && <Alert severity="success" sx={{ mb: 2 }}>
+                        {role === 'ROLE_STUDENT' 
+                            ? 'Tiến hành lấy dữ liệu khuôn mặt...' 
+                            : 'Đăng ký thành công! Đang chuyển hướng...'}
+                    </Alert>}
                     
                     <Box component="form" onSubmit={handleRegister} noValidate sx={{ mt: 1 }}>
                         <TextField

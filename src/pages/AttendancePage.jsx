@@ -13,10 +13,21 @@ import PortraitIcon from '@mui/icons-material/Portrait';
 import FilterIcon from '@mui/icons-material/Filter';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import SchoolIcon from '@mui/icons-material/School';
 
 export default function AttendancePage() {
     const location = useLocation();
     const navigate = useNavigate();
+    
+    // Kiểm tra role và chuyển hướng nếu không phải là giáo viên
+    useEffect(() => {
+        const roles = localStorage.getItem('roles');
+        if (!roles || !roles.includes('ROLE_TEACHER')) {
+            navigate('/calendar');
+        }
+    }, [navigate]);
     
     // Lấy lessonId từ URL bằng cách lấy tham số cuối cùng
     const pathParts = location.pathname.split('/');
@@ -27,6 +38,58 @@ export default function AttendancePage() {
     const [loading, setLoading] = useState(true);
     const [students, setStudents] = useState([]);
     const [error, setError] = useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+
+    const handleStateClick = (event, student) => {
+        setAnchorEl(event.currentTarget);
+        setSelectedStudent(student);
+    };
+
+    const handleStateClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleStateChange = async (newState) => {
+        if (!selectedStudent) return;
+        
+        // Cập nhật UI ngay lập tức
+        const updatedStudents = [...students];
+        const studentIndex = updatedStudents.findIndex(s => s.id === selectedStudent.id);
+        
+        if (studentIndex !== -1) {
+            updatedStudents[studentIndex] = {
+                ...updatedStudents[studentIndex],
+                attendanceType: newState
+            };
+            setStudents(updatedStudents);
+        }
+        
+        try {
+            const response = await fetch('http://localhost:8080/api/attendance/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    lessonId: parseInt(lessonId),
+                    studentId: selectedStudent.id,
+                    checkinDate: new Date().toISOString(),
+                    imgPath: "",
+                    status: newState
+                }),
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error('Không thể cập nhật trạng thái điểm danh');
+            }
+        } catch (error) {
+            console.error('Lỗi khi cập nhật trạng thái:', error);
+        }
+        
+        handleStateClose();
+    };
 
     const fetchStudentsAttendance = async (classId) => {
         try {
@@ -48,7 +111,8 @@ export default function AttendancePage() {
                 ...student,
                 state: false, // Giá trị mặc định
                 time: "--",
-                imgPath: ""
+                imgPath: "",
+                attendanceType: "Absent" // Giá trị mặc định
             }));
             
             // Lấy thông tin điểm danh cho từng sinh viên
@@ -74,12 +138,16 @@ export default function AttendancePage() {
                         
                         const attendanceData = await attendanceResponse.json();
                         
+                        // Sử dụng trực tiếp status từ API
+                        let attendanceType = attendanceData.status || "--";
+                        
                         // Cập nhật trạng thái điểm danh
                         return {
                             ...student,
                             state: attendanceData.checkinDate !== null,
                             time: attendanceData.checkinDate ? new Date(attendanceData.checkinDate).toLocaleTimeString() : "--",
-                            imgPath: attendanceData.imgPath || ""
+                            imgPath: attendanceData.imgPath || "",
+                            attendanceType: attendanceType
                         };
                     } catch (error) {
                         console.error(`Lỗi khi xử lý dữ liệu điểm danh cho sinh viên ${student.id}:`, error);
@@ -120,6 +188,7 @@ export default function AttendancePage() {
                 }
                 const data = await response.json();
                 // console.log("Dữ liệu bài học nhận được:", data);
+                setLessonData(data);
                 // // Sau khi có lesson data, lấy thông tin về class
                 return data.class_id;
             } catch (error) {
@@ -138,7 +207,7 @@ export default function AttendancePage() {
                     throw new Error('Không thể kết nối đến máy chủ');
                 }
                 const data = await response.json();
-                console.log("Dữ liệu lớp học nhận được:", data);
+                // console.log("Dữ liệu lớp học nhận được:", data);
                 
                 // Vấn đề: setState là bất đồng bộ, không cập nhật state ngay lập tức
                 // Giải pháp: Sử dụng biến data trực tiếp thay vì classData
@@ -146,7 +215,7 @@ export default function AttendancePage() {
                 
                 // Đây là lý do tại sao classData vẫn là null sau khi gọi setClassData
                 // React gom các cập nhật state và thực hiện chúng sau khi hàm này hoàn tất
-                console.log("Class data (từ biến cục bộ):", data);
+                // console.log("Class data (từ biến cục bộ):", data);
                 
                 // Trả về class ID để fetch students
                 return data.class_id;
@@ -171,17 +240,17 @@ export default function AttendancePage() {
 
         // Thiết lập interval để cập nhật trạng thái điểm danh mỗi 2 giây
         const intervalId = setInterval(() => {
-            console.log("Interval đang chạy mỗi 2 giây - Thời gian hiện tại:", new Date().toLocaleTimeString());
-            console.log("Class data:", classData);
+            // console.log("Interval đang chạy mỗi 2 giây - Thời gian hiện tại:", new Date().toLocaleTimeString());
+            // console.log("Class data:", classData);
             if (classData?.id) {
-                console.log("Đang cập nhật trạng thái điểm danh...");
+                // console.log("Đang cập nhật trạng thái điểm danh...");
                 fetchStudentsAttendance(classData.id);
             }
         }, 2000);
 
         // Xóa interval khi component unmount
         return () => {
-            console.log("Đang xóa interval");
+            // console.log("Đang xóa interval");
             clearInterval(intervalId);
         };
     }, [lessonId, classData?.id ]);
@@ -232,6 +301,10 @@ export default function AttendancePage() {
         <Box sx={styles.container}>
             <Box sx={styles.information}>
                 <Typography sx={styles.information__title}>Attendance</Typography>
+                <Typography sx={styles.information__item}>
+                    <SchoolIcon sx={styles.information__item__icon}/>
+                    {classData?.name || "Tên lớp"}
+                </Typography>
                 <Box sx={{ display: "flex", gap: "20px" }}>
                     <Typography sx={styles.information__item}><CalendarMonthIcon sx={styles.information__item__icon}/>{ lessonData?.lessonDate ? formatDate(lessonData.lessonDate) : AttendanceData.date }</Typography>
                     {" / "}
@@ -248,7 +321,7 @@ export default function AttendancePage() {
                                 <Typography sx={styles.parameter__number}>{ students.length }</Typography>
                             </Box>
                             <Box sx={styles.parameter}>
-                                <Typography sx={styles.parameter__title}>Present</Typography>
+                                <Typography sx={styles.parameter__title}>Attended</Typography>
                                 <Typography sx={styles.parameter__number}>{ students.filter(item => item.state == true).length }</Typography>
                             </Box>
                             <Box sx={styles.parameter}>
@@ -266,11 +339,11 @@ export default function AttendancePage() {
                             </Box>
                             <Box sx={styles.parameter}>
                                 <Typography sx={styles.parameter__title}>Early Clock In</Typography>
-                                <Typography sx={styles.parameter__number}>{ students.filter(item => item.state == true && item.time <= (lessonData?.startTime || AttendanceData.startTime)).length }</Typography>
+                                <Typography sx={styles.parameter__number}>{ students.filter(item => item.attendanceType === "Attended").length }</Typography>
                             </Box>
                             <Box sx={styles.parameter}>
                                 <Typography sx={styles.parameter__title}>Late Clock In</Typography>
-                                <Typography sx={styles.parameter__number}>{ students.filter(item => item.state == true && item.time > (lessonData?.startTime || AttendanceData.startTime)).length }</Typography>
+                                <Typography sx={styles.parameter__number}>{ students.filter(item => item.attendanceType === "Late").length }</Typography>
                             </Box>
                         </Box>
                     </Box>
@@ -280,11 +353,10 @@ export default function AttendancePage() {
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                         <TableRow>
-                            <TableCell sx={{ color: "#828282" }}>Student Name</TableCell>
-                            <TableCell sx={{ color: "#828282" }} align="right">State</TableCell>
-                            <TableCell sx={{ color: "#828282" }} align="right">Time</TableCell>
-                            <TableCell sx={{ color: "#828282" }} align="right">Image _ Atd</TableCell>
-                            <TableCell sx={{ color: "#828282" }} align="right">Confirm _ Atd</TableCell>
+                            <TableCell sx={{ color: "#828282", textAlign: "center" }}>Student Name</TableCell>
+                            <TableCell sx={{ color: "#828282", textAlign: "center" }}>State</TableCell>
+                            <TableCell sx={{ color: "#828282", textAlign: "center" }}>Time</TableCell>
+                            <TableCell sx={{ color: "#828282", textAlign: "center" }}>Image</TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
@@ -293,20 +365,46 @@ export default function AttendancePage() {
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell component="th" scope="row">
+                                <TableCell component="th" scope="row" sx={{ textAlign: "center" }}>
                                     {row.name}
                                 </TableCell>
-                                <TableCell align="right">
-                                    {row.state == true ? <span style={{color: "#00CC33", fontSize: "13px"}}>Attended</span> : <Typography sx={{color: "#FA8072", fontSize: "13px"}}>Absent</Typography>}
+                                <TableCell sx={{ textAlign: "center" }}>
+                                    <Button 
+                                        onClick={(e) => handleStateClick(e, row)}
+                                        sx={{ 
+                                            fontSize: "13px",
+                                            color: row.attendanceType === "Attended" ? "#00CC33" : 
+                                                  row.attendanceType === "Late" ? "#FFA500" : "#FA8072",
+                                            textTransform: "none",
+                                            minWidth: "80px"
+                                        }}
+                                    >
+                                        {row.attendanceType}
+                                    </Button>
                                 </TableCell>
-                                <TableCell align="right">{row.time}</TableCell>
-                                <TableCell align="right">{row.state == true && <Button sx={{ fontSize: "12px" }} color="secondary"><FilterIcon/></Button>}</TableCell>
-                                <TableCell align="right">{row.state == false && <Button sx={{ fontSize: "12px" }}>Confirm</Button>}</TableCell>
+                                <TableCell sx={{ textAlign: "center" }}>{row.time}</TableCell>
+                                <TableCell sx={{ textAlign: "center" }}>{row.state == true && <Button sx={{ fontSize: "12px" }} color="secondary"><FilterIcon/></Button>}</TableCell>
                             </TableRow>
                         ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
+                
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleStateClose}
+                >
+                    <MenuItem onClick={() => handleStateChange("Absent")}>
+                        <Typography sx={{ color: "#FA8072" }}>Absent</Typography>
+                    </MenuItem>
+                    <MenuItem onClick={() => handleStateChange("Attended")}>
+                        <Typography sx={{ color: "#00CC33" }}>Attended</Typography>
+                    </MenuItem>
+                    <MenuItem onClick={() => handleStateChange("Late")}>
+                        <Typography sx={{ color: "#FFA500" }}>Late</Typography>
+                    </MenuItem>
+                </Menu>
             </Box>
         </Box>
     )

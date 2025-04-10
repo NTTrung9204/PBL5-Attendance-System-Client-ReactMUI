@@ -55,16 +55,16 @@ function CalendarPage() {
     console.log(lessonStartDateTime)
     console.log(lessonEndDateTime)
     if (isCompleted) {
-      return 'Đã kết thúc';
+      return 'Passed';
     } else if (
       currentDateTime >= lessonStartDateTime && 
       currentDateTime <= lessonEndDateTime
     ) {
-      return 'Đang diễn ra';
+      return 'Now';
     } else if (currentDateTime > lessonEndDateTime) {
-      return 'Đã kết thúc';
+      return 'Passed';
     } else {
-      return 'Sắp diễn ra';
+      return 'Pending';
     }
   };
 
@@ -89,11 +89,13 @@ function CalendarPage() {
         ) : (
           <Box sx={{
               display: 'flex', 
+              flexDirection: 'column',
               gap: '24px', 
               flexWrap: 'wrap', 
               padding: '16px',  
               marginBottom: '16px', 
               justifyContent: 'center',
+              alignItems: 'center', 
               paddingBottom: '100px'
           }}>    
               {lessons.map(lesson => (

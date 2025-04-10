@@ -13,6 +13,8 @@ import GeneralClass from './pages/class/GeneralClass';
 import HomeClass from './pages/class/HomeClass';
 import CalendarPage from './pages/CalendarPage';
 import AttendancePage from './pages/AttendancePage';
+import StudentGroupsPage from './pages/StudentGroupsPage';
+import FaceRegistrationPage from './pages/FaceRegistrationPage';
 
 function App() {
   return (
@@ -21,6 +23,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/face-registration" element={<FaceRegistrationPage />} />
         <Route
           path="/*"
           element={
@@ -40,7 +43,12 @@ function App() {
                 >
                   <Routes>
                     <Route path="/" element={<Navigate to="/groups" replace />} />
-                    <Route path="/groups" element={<GroupsPage />} />
+                    <Route path="/groups" element={
+                      localStorage.getItem('roles') && 
+                      localStorage.getItem('roles').includes('ROLE_TEACHER') 
+                        ? <GroupsPage /> 
+                        : <StudentGroupsPage />
+                    } />
                     <Route path="/assignment" element={<AssignmentPage />} />
                     <Route path="/activities/*" element={<Activity />} />
                     <Route path="/chats/*" element={<Chat />} />
