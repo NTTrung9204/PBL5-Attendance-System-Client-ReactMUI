@@ -78,7 +78,10 @@ function FaceRegistrationPage() {
                 return;
             }
 
-            const faceResponse = await fetch('http://localhost:8080/api/face/register', {
+            console.log("Đang gửi yêu cầu đăng ký khuôn mặt với username:", username);
+            console.log("Hình ảnh đang gửi:", images);
+
+            const faceResponse = await fetch('http://localhost:5000/api/face/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -87,7 +90,8 @@ function FaceRegistrationPage() {
                     username: username,
                     images: images
                 }),
-                credentials: 'include'
+                credentials: 'include',  // Nếu bạn cần gửi cookie
+                mode: 'cors'  // Thêm dòng này
             });
 
             if (faceResponse.ok) {
