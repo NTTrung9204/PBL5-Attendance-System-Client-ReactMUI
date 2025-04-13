@@ -5,6 +5,7 @@ const CheckAttendancePage = () => {
 
     const [student, setStudent] = useState()
     const [AttendanceResult, setAttendanceResult] = useState()
+    const [TimeResult, setTimeResult] = useState()
 
 
     useEffect(()=>{
@@ -33,31 +34,45 @@ const CheckAttendancePage = () => {
     useEffect(()=> {
         const pathParts = location.pathname.split('/');
         const lessionId = pathParts[pathParts.length - 1];
-        const handleAttendanceResult = async()=>{
-            fetch(`http://localhost:8080/api/attendance/${lessionId}`, {
-                method: 'POST',
+        const handleAttendanceResult = async ()=>{
+            const res = await fetch(`http://localhost:8080/api/attendance/result/${lessionId}`, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include'
-            }).then(reponse => {
-                if (!reponse.ok){
-                    throw new Error('Không thể lấy dữ liệu sinh viên')
-                }
-              
-                return reponse.json()
-            }).then(data=>{
+            })
+
+            if (!res.ok){
+                throw new Error('Không thể lấy dữ liệu sinh viên')
+            }else{
+                const data =await res.json()
                 console.log(JSON.stringify(data))
                 console.log(data.result)
                 setAttendanceResult(data.result)
-            })
+                if (data.result){
+                    const checkin = data.result.checkinDate
+                    const dayOnly = checkin.split("T")[0]
+                    var timeOnly = checkin.split("T")[1] 
+                    const [hour, minute] = timeOnly.split(":");
+                    timeOnly = `${hour}:${minute}`;
+                    const tr = {
+                        dayOnly: dayOnly,
+                        timeOnly: timeOnly
+                    } 
+                    console.log(tr)
+                    setTimeResult(tr)
+                }
+            }
         }
         handleAttendanceResult()
+      
     }, [])
 
-    if (!student) {
+    if (!student||!AttendanceResult||!TimeResult) {
         return <div>Loading...</div>; 
     }
+   
 
     return (
         <Container maxWidth="lg" sx={{ paddingTop: 5 }}>
@@ -87,10 +102,10 @@ const CheckAttendancePage = () => {
                     <strong>Id:</strong> {student.id}
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
-                    <strong>Date:</strong> 14/04/2025
+                    <strong>Date:</strong> {TimeResult.dayOnly}
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
-                    <strong>Time:</strong> 10:30 AM
+                    <strong>Time:</strong> {TimeResult.timeOnly}
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
                     <strong>Status:</strong> Đã Điểm Danh
@@ -104,10 +119,10 @@ const CheckAttendancePage = () => {
             <Card elevation={3}>
                 <CardContent>
                 <Typography variant="h5" gutterBottom>
-                    Kết Quả Nhận Diện Khuôn Mặt
+                    Face Recognize Result
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
-                    <strong>Trạng Thái:</strong> Thành Công
+                    <strong>Trạng Thái:</strong> Success
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
                     <strong>Độ Chính Xác:</strong> 98%
