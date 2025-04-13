@@ -64,6 +64,8 @@ function CalendarCard({ date, status, endTime, total, startTime, lessonId }) {
     const roles = localStorage.getItem('roles');
     if (roles && roles.includes('ROLE_TEACHER')) {
       navigate(`/calendar/attendance/${lessonId}`);
+    }else if (roles && roles.includes('ROLE_STUDENT')){
+      navigate(`/calendar/attendance/check/${lessonId}`)
     }
   }
 
@@ -79,7 +81,8 @@ function CalendarCard({ date, status, endTime, total, startTime, lessonId }) {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        cursor: localStorage.getItem('roles')?.includes('ROLE_TEACHER') ? 'pointer' : 'default'
+        // cursor: localStorage.getItem('roles')?.includes('ROLE_TEACHER') ? 'pointer' : 'default'
+        cursor: 'pointer'
       }}
       onClick={handleClick}
       >
