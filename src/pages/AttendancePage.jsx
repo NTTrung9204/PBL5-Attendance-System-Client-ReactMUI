@@ -54,7 +54,7 @@ export default function AttendancePage() {
 
     const handleStateChange = async (newState) => {
         if (!selectedStudent) return;
-        
+        console.log("aa")
         // Cập nhật UI ngay lập tức
         const updatedStudents = [...students];
         const studentIndex = updatedStudents.findIndex(s => s.id === selectedStudent.id);

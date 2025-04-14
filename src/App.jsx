@@ -15,6 +15,7 @@ import CalendarPage from './pages/CalendarPage';
 import AttendancePage from './pages/AttendancePage';
 import StudentGroupsPage from './pages/StudentGroupsPage';
 import FaceRegistrationPage from './pages/FaceRegistrationPage';
+import CheckAttendancePage from './pages/CheckAttendancePage';
 
 function App() {
   return (
@@ -55,6 +56,8 @@ function App() {
                     <Route path="/class/*" element={<HomeClass />} />
                     <Route path="/calendar/*" element={<CalendarPage />} />
                     <Route path="/calendar/attendance/*" element={<AttendancePage />} />
+                    <Route path="/calendar/attendance/check/*" element={<CheckAttendancePage />} />
+                    
                   </Routes>
                 </Box>
               </Box>
