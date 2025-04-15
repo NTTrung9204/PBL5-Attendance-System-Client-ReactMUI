@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, Dialog, DialogContent } from "@mui/material";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import * as React from 'react';
@@ -40,6 +40,8 @@ export default function AttendancePage() {
     const [error, setError] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedStudent, setSelectedStudent] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [openImageDialog, setOpenImageDialog] = useState(false);
 
     const handleStateClick = (event, student) => {
         setAnchorEl(event.currentTarget);
@@ -89,6 +91,16 @@ export default function AttendancePage() {
         }
         
         handleStateClose();
+    };
+
+    const handleImageClick = (imagePath) => {
+        const originalPath = "http://localhost:5000/student_images/"
+        setSelectedImage(originalPath + imagePath);
+        setOpenImageDialog(true);
+    };
+
+    const handleCloseImageDialog = () => {
+        setOpenImageDialog(false);
     };
 
     const fetchStudentsAttendance = async (classId) => {
@@ -384,7 +396,15 @@ export default function AttendancePage() {
                                     </Button>
                                 </TableCell>
                                 <TableCell sx={{ textAlign: "center" }}>{row.time}</TableCell>
-                                <TableCell sx={{ textAlign: "center" }}>{row.state == true && <Button sx={{ fontSize: "12px" }} color="secondary"><FilterIcon/></Button>}</TableCell>
+                                <TableCell sx={{ textAlign: "center" }}>{row.state == true && 
+                                    <Button 
+                                        sx={{ fontSize: "12px" }} 
+                                        color="secondary"
+                                        onClick={() => handleImageClick(row.imgPath)}
+                                    >
+                                        <FilterIcon/>
+                                    </Button>}
+                                </TableCell>
                             </TableRow>
                         ))}
                         </TableBody>
@@ -407,6 +427,19 @@ export default function AttendancePage() {
                     </MenuItem>
                 </Menu>
             </Box>
+            <Dialog open={openImageDialog} onClose={handleCloseImageDialog} maxWidth="md">
+                <DialogContent>
+                    {selectedImage ? (
+                        <img 
+                            src={selectedImage} 
+                            alt="Student attendance" 
+                            style={{ width: '100%', maxHeight: '80vh' }} 
+                        />
+                    ) : (
+                        <Typography>No image available</Typography>
+                    )}
+                </DialogContent>
+            </Dialog>
         </Box>
     )
 }
