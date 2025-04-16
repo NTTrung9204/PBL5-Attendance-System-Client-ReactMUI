@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, Dialog, DialogContent } from "@mui/material";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import * as React from 'react';
@@ -40,6 +40,8 @@ export default function AttendancePage() {
     const [error, setError] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedStudent, setSelectedStudent] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [openImageDialog, setOpenImageDialog] = useState(false);
 
     const handleStateClick = (event, student) => {
         setAnchorEl(event.currentTarget);
@@ -52,7 +54,7 @@ export default function AttendancePage() {
 
     const handleStateChange = async (newState) => {
         if (!selectedStudent) return;
-        
+        console.log("aa")
         // Cập nhật UI ngay lập tức
         const updatedStudents = [...students];
         const studentIndex = updatedStudents.findIndex(s => s.id === selectedStudent.id);
@@ -92,6 +94,16 @@ export default function AttendancePage() {
         }
         
         handleStateClose();
+    };
+
+    const handleImageClick = (imagePath) => {
+        const originalPath = "http://localhost:5000/student_images/"
+        setSelectedImage(originalPath + imagePath);
+        setOpenImageDialog(true);
+    };
+
+    const handleCloseImageDialog = () => {
+        setOpenImageDialog(false);
     };
 
     const fetchStudentsAttendance = async (classId) => {
@@ -373,6 +385,7 @@ export default function AttendancePage() {
                                 </TableCell>
                                 <TableCell sx={{ textAlign: "center" }}>
                                     <Button 
+                                        type="button"
                                         onClick={(e) => handleStateClick(e, row)}
                                         sx={{ 
                                             fontSize: "13px",
@@ -386,7 +399,15 @@ export default function AttendancePage() {
                                     </Button>
                                 </TableCell>
                                 <TableCell sx={{ textAlign: "center" }}>{row.time}</TableCell>
-                                <TableCell sx={{ textAlign: "center" }}>{row.state == true && <Button sx={{ fontSize: "12px" }} color="secondary"><FilterIcon/></Button>}</TableCell>
+                                <TableCell sx={{ textAlign: "center" }}>{row.state == true && 
+                                    <Button 
+                                        sx={{ fontSize: "12px" }} 
+                                        color="secondary"
+                                        onClick={() => handleImageClick(row.imgPath)}
+                                    >
+                                        <FilterIcon/>
+                                    </Button>}
+                                </TableCell>
                             </TableRow>
                         ))}
                         </TableBody>
@@ -409,30 +430,66 @@ export default function AttendancePage() {
                     </MenuItem>
                 </Menu>
             </Box>
+            <Dialog open={openImageDialog} onClose={handleCloseImageDialog} maxWidth="md">
+                <DialogContent>
+                    {selectedImage ? (
+                        <img 
+                            src={selectedImage} 
+                            alt="Student attendance" 
+                            style={{ width: '100%', maxHeight: '80vh' }} 
+                        />
+                    ) : (
+                        <Typography>No image available</Typography>
+                    )}
+                </DialogContent>
+            </Dialog>
         </Box>
     )
 }
 
 const styles = {
     container: {
-        padding: "40px"
+        padding: "40px",
+        minHeight: '100vh',
+        width: '100%',
+        position: 'relative',
+        background: 'linear-gradient(135deg, #f0f4f8 0%, #e6eef7 100%)',
+        '&::before': {
+            content: '""',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'linear-gradient(135deg, #f0f4f8 0%, #e6eef7 100%)',
+            zIndex: -1
+        }
     },
     information: {
-        marginBottom: "40px"
+        marginBottom: "40px",
+        backgroundColor: '#ffffff',
+        padding: '20px',
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
     },
     information__title: {
         fontSize: "30px",
         fontWeight: "600",
+        color: '#1976d2',
+        marginBottom: '16px',
+        textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
     },
     information__item: {
         fontSize: "15px",
         display: "flex",
         alignItems: "center",
         gap: "5px",
-        color: "gray",
+        color: '#4a5568',
+        marginBottom: '8px'
     },
     information__item__icon: {
-        fontSize: "20px"
+        fontSize: "20px",
+        color: '#4299e1'
     },
     statistic: {
         display: "flex",
@@ -441,52 +498,68 @@ const styles = {
     },
     statistic__item: {
         minWidth: "400px",
-        padding: "10px",
-        boxShadow: "0px 1px 2px 0px"
+        padding: "16px",
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
     },
     statistic__item__title: {
         fontSize: "20px",
-        color: "#3399FF",
-        marginBottom: "15px"
+        color: '#1976d2',
+        marginBottom: "15px",
+        textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
     },
     statistic__item__parameter: {
         display: "flex",
         gap: "50px",
     },
     parameter: {
-        
+        flex: 1
     },
     parameter__title: {
         fontSize: "15px",
-        color: "#AAAAAA",
+        color: '#718096',
         marginBottom: "5px"
     },
     parameter__number: {
-
+        fontSize: '24px',
+        fontWeight: 'bold',
+        color: '#2d3748'
     },
     table: {
-        // marginTop: "30px",
-        boxShadow: "0px 1px 2px 0px",
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
         overflow: "auto",
         maxHeight: "calc(100vh - 250px)",
+        '& .MuiTableCell-root': {
+            color: '#4a5568',
+            borderColor: 'rgba(0,0,0,0.1)'
+        },
+        '& .MuiTableHead-root': {
+            backgroundColor: '#f7fafc'
+        },
+        '& .MuiTableRow-root:hover': {
+            backgroundColor: '#f7fafc'
+        },
         '&::-webkit-scrollbar': {
             width: '10px',
         },
         '&::-webkit-scrollbar-thumb': {
-            background: 'linear-gradient(120deg, rgba(200, 200, 200, 0.7), rgba(240, 240, 240, 0.9))', 
+            background: 'linear-gradient(120deg, #cbd5e0, #e2e8f0)', 
             borderRadius: '12px', 
-            border: '2px solid rgba(255, 255, 255, 0.6)', 
+            border: '2px solid #ffffff', 
             transition: 'background 0.3s ease-in-out, transform 0.2s',
         },
         '&::-webkit-scrollbar-thumb:hover': {
-            background: 'linear-gradient(120deg, rgba(220, 220, 220, 0.9), rgba(255, 255, 255, 1))', 
+            background: 'linear-gradient(120deg, #a0aec0, #cbd5e0)', 
             transform: 'scale(1.1)', 
-            boxShadow: '0 0 8px rgba(255, 255, 255, 0.5)',
+            boxShadow: '0 0 8px rgba(0,0,0,0.1)',
         },
         '&::-webkit-scrollbar-track': {
-            background: 'rgba(245, 245, 245, 0.7)', 
+            background: '#f7fafc', 
             borderRadius: '12px',
-            boxShadow: 'inset 0 0 6px rgba(200, 200, 200, 0.2)', 
+            boxShadow: 'inset 0 0 6px rgba(0,0,0,0.1)', 
         },
     }
 }

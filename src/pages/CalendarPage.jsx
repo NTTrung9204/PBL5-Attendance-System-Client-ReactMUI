@@ -78,14 +78,20 @@ function CalendarPage() {
   return (
     <Box sx={{ 
       height: '100%', 
-      overflowY: 'auto', 
+      overflowY: 'auto',
+      background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)'
     }}> 
-        <h2 style={{ textAlign: 'center' }}>Class Calendar</h2>
+        <h2 style={{ 
+          textAlign: 'center', 
+          color: '#1976d2',
+          textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+          margin: '24px 0'
+        }}>Class Calendarc</h2>
         
         {loading ? (
-          <Box sx={{ textAlign: 'center', padding: '20px' }}>Đang tải dữ liệu lịch học...</Box>
+          <Box sx={{ textAlign: 'center', padding: '20px', color: '#1976d2' }}>Đang tải dữ liệu lịch học...</Box>
         ) : error ? (
-          <Box sx={{ textAlign: 'center', padding: '20px', color: 'red' }}>Lỗi: {error}</Box>
+          <Box sx={{ textAlign: 'center', padding: '20px', color: '#f44336', backgroundColor: 'rgba(244, 67, 54, 0.08)', borderRadius: '8px', margin: '0 auto', maxWidth: '500px' }}>Lỗi: {error}</Box>
         ) : (
           <Box sx={{
               display: 'flex', 
