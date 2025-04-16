@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControl, FormGroup, FormControlLabel, Checkbox, Typography, IconButton, Grid } from "@mui/material";
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControl, FormGroup, FormControlLabel, Checkbox, Typography, IconButton, Grid, Alert } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from "react";
 
@@ -25,6 +25,7 @@ function AddGroupButton({ onClassAdded }) {
         sunday: { startTime: "", endTime: "" }
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleOpen = () => {
         setOpen(true);
@@ -54,6 +55,7 @@ function AddGroupButton({ onClassAdded }) {
     const handleSubmit = async () => {
         try {
             setIsSubmitting(true);
+            setErrorMessage("");
             const selectedDaysWithTime = {};
             Object.keys(selectedDays).forEach(day => {
                 if (selectedDays[day]) {
@@ -77,7 +79,13 @@ function AddGroupButton({ onClassAdded }) {
             });
             
             if (!response.ok) {
-                throw new Error('Không thể tạo lớp học');
+                const errorText = await response.text();
+                try {
+                    const data = JSON.parse(errorText);
+                    throw new Error(data.message);
+                } catch (e) {
+                    throw new Error(errorText);
+                }
             }
             
             const data = await response.json();
@@ -91,6 +99,7 @@ function AddGroupButton({ onClassAdded }) {
             }
         } catch (error) {
             console.error("Lỗi khi tạo lớp học:", error);
+            setErrorMessage(error.message);
         } finally {
             setIsSubmitting(false);
         }
@@ -117,6 +126,7 @@ function AddGroupButton({ onClassAdded }) {
             saturday: { startTime: "", endTime: "" },
             sunday: { startTime: "", endTime: "" }
         });
+        setErrorMessage("");
     };
 
     return (
@@ -164,6 +174,11 @@ function AddGroupButton({ onClassAdded }) {
                     Thêm lớp học mới
                 </DialogTitle>
                 <DialogContent sx={{ padding: '24px' }}>
+                    {errorMessage && (
+                        <Alert severity="error" sx={{ mb: 2 }}>
+                            {errorMessage}
+                        </Alert>
+                    )}
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
                         <TextField
                             label="Tên lớp học"

@@ -78,7 +78,8 @@ function FindGroupButton() {
       });
       
       if (!response.ok) {
-        throw new Error('Không thể tham gia lớp học này');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Không thể tham gia lớp học này');
       }
       
       setJoinSuccess(true);

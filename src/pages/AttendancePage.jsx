@@ -80,8 +80,11 @@ export default function AttendancePage() {
                 }),
                 credentials: 'include'
             });
-
+            console.log(new Date().toISOString())    
             if (!response.ok) {
+                
+                const data = await response.json();
+                console.log(data.message);
                 throw new Error('Không thể cập nhật trạng thái điểm danh');
             }
         } catch (error) {
