@@ -80,12 +80,8 @@ function AddGroupButton({ onClassAdded }) {
             
             if (!response.ok) {
                 const errorText = await response.text();
-                try {
-                    const data = JSON.parse(errorText);
-                    throw new Error(data.message);
-                } catch (e) {
-                    throw new Error(errorText);
-                }
+                const data = JSON.parse(errorText);
+                throw new Error(data.message);
             }
             
             const data = await response.json();
