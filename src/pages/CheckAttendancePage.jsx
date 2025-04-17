@@ -44,6 +44,7 @@ const CheckAttendancePage = () => {
             })
 
             if (!res.ok){
+                console.log(res)
                 throw new Error('Không thể lấy dữ liệu sinh viên')
             }else{
                 const data =await res.json()
@@ -129,7 +130,7 @@ const CheckAttendancePage = () => {
                 </Typography>
                 <CardMedia
                     component="img"
-                    image="attendance-record.jpg"
+                    image={`http://localhost:5000/student_images/${AttendanceResult.imgPath}`}
                     alt="Kết Quả Nhận Diện"
                     sx={{ height: 200, objectFit: 'cover', borderRadius: 2, marginTop: 2 }}
                 />
