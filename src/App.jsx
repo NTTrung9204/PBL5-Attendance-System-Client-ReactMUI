@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/ResigterPage';
+import RegisterPage from './pages/RegisterPage';
 import GroupsPage from './pages/GroupsPage';
 import AssignmentPage from './pages/AssignmentPage';
 import Activity from './pages/Activity';
