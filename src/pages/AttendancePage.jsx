@@ -68,7 +68,7 @@ export default function AttendancePage() {
         }
         
         try {
-            const response = await fetch('http://localhost:8080/api/attendance/update', {
+            const response = await fetch('https://192.168.1.10:8080/api/attendance/update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ export default function AttendancePage() {
                 throw new Error('Không tìm thấy ID lớp học');
             }
             
-            const response = await fetch(`http://localhost:8080/api/classes/${classId}/students`, {
+            const response = await fetch(`https://192.168.1.10:8080/api/classes/${classId}/students`, {
                 credentials: 'include'
             });
             if (!response.ok) {
@@ -134,7 +134,7 @@ export default function AttendancePage() {
             const studentsWithAttendance = await Promise.all(
                 studentsWithBasicInfo.map(async (student) => {
                     try {
-                        const attendanceResponse = await fetch('http://localhost:8080/api/attendance/get_status', {
+                        const attendanceResponse = await fetch('https://192.168.1.10:8080/api/attendance/get_status', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -192,7 +192,7 @@ export default function AttendancePage() {
         
         const fetchLessonData = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/lessons/${lessonId}`, {
+                const response = await fetch(`https://192.168.1.10:8080/api/lessons/${lessonId}`, {
                     credentials: 'include'
                 });
                 if (!response.ok) {
@@ -215,7 +215,7 @@ export default function AttendancePage() {
 
         const fetchClassData = async (classId) => {
             try {
-                const response = await fetch(`http://localhost:8080/api/classes/lesson/${lessonId}`, {
+                const response = await fetch(`https://192.168.1.10:8080/api/classes/lesson/${lessonId}`, {
                     credentials: 'include'
                 });
                 if (!response.ok) {

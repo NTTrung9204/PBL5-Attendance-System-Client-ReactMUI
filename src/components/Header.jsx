@@ -18,7 +18,7 @@ function Header() {
         }}
       >
         <Typography variant="h6" sx={{color: '#000', fontWeight: '300'}}>
-          PBL5
+          Auto Attendance System
         </Typography>
         
         <Box sx={{ 

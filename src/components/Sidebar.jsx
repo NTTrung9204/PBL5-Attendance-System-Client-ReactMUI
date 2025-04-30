@@ -3,6 +3,7 @@ import { Drawer, List, ListItem, ListItemText, ListItemIcon, Typography, Box } f
 import { Group as GroupIcon, Assignment as AssignmentIcon, Notifications as ActivityIcon} from '@mui/icons-material';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import { Link, useLocation } from 'react-router-dom';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 function Sidebar() {
   const location = useLocation();
@@ -89,8 +90,23 @@ function Sidebar() {
           </ListItemIcon>
           <ListItemText primary="Groups" sx={currentPath === '/groups' ? selectedListItemTextStyle : listItemTestStyle} />
         </ListItem>
-        
+
         <ListItem 
+          sx={getListItemStyles('/profile')} 
+          button 
+          component={Link} 
+          to="/profile"
+        >
+          <ListItemIcon sx={{display: 'flex', justifyContent: 'center'}}>
+            <AccountCircleIcon sx={{ 
+              color: currentPath === '/profile' ? '#1976d2' : '#727272',
+              transition: 'color 0.3s ease'
+            }} />
+          </ListItemIcon>
+          <ListItemText primary="Account" sx={currentPath === '/profile' ? selectedListItemTextStyle : listItemTestStyle} />
+        </ListItem>
+        
+        {/* <ListItem 
           sx={getListItemStyles('/assignment')} 
           button 
           component={Link} 
@@ -133,7 +149,7 @@ function Sidebar() {
             }} />
           </ListItemIcon>
           <ListItemText primary="Chat" sx={currentPath === '/chats' ? selectedListItemTextStyle : listItemTestStyle} />
-        </ListItem>
+        </ListItem> */}
       </List>
     </Drawer>
   );

@@ -76,7 +76,7 @@ function RegisterPage() {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/register', {
+            const response = await fetch('https://192.168.1.10:8080/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

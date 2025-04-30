@@ -44,7 +44,7 @@ function FindGroupButton() {
     setClassInfo(null);
     
     try {
-      const response = await fetch(`http://localhost:8080/api/classes/${classId}`, {
+      const response = await fetch(`https://192.168.1.10:8080/api/classes/${classId}`, {
         credentials: 'include'
       });
       
@@ -69,7 +69,7 @@ function FindGroupButton() {
     setError(null);
     
     try {
-      const response = await fetch(`http://localhost:8080/api/student-class/join/${classInfo.id}`, {
+      const response = await fetch(`https://192.168.1.10:8080/api/student-class/join/${classInfo.id}`, {
         method: 'POST',
         credentials: 'include',
         headers: {

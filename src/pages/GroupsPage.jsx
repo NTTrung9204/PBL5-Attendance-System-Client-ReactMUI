@@ -15,7 +15,8 @@ function GroupsPage() {
 
   const fetchClasses = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/classes/teacher/my-classes', {
+      console.log(localStorage.getItem('roles'));
+      const response = await fetch('https://192.168.1.10:8080/api/classes/teacher/my-classes', {
         credentials: 'include'
       });
       if (!response.ok) {
@@ -32,7 +33,15 @@ function GroupsPage() {
   };
 
   useEffect(() => {
-    fetchClasses();
+    const roles = localStorage.getItem('roles');
+    if (roles && roles.includes('ROLE_TEACHER')) {
+      console.log("Fetching teacher classes with roles:", roles);
+      fetchClasses();
+    } else {
+      console.warn("GroupsPage accessed with non-teacher role:", roles);
+      setError("Bạn không có quyền truy cập trang này");
+      setLoading(false);
+    }
   }, []);
 
   const getGridColumns = () => {

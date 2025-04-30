@@ -10,7 +10,7 @@ const CheckAttendancePage = () => {
 
     useEffect(()=>{
         const handleInfo = async() => {
-            fetch("http://localhost:8080/api/student", {
+            fetch("https://192.168.1.10:8080/api/student", {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ const CheckAttendancePage = () => {
         const pathParts = location.pathname.split('/');
         const lessionId = pathParts[pathParts.length - 1];
         const handleAttendanceResult = async ()=>{
-            const res = await fetch(`http://localhost:8080/api/attendance/result/${lessionId}`, {
+            const res = await fetch(`https://192.168.1.10:8080/api/attendance/result/${lessionId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

@@ -43,7 +43,7 @@ function LoginPage() {
         setError('');
     
         try {
-            const response = await fetch('http://localhost:8080/signin', {
+            const response = await fetch('https://192.168.1.10:8080/signin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,8 +59,23 @@ function LoginPage() {
                 return;
             }
             else if (response.ok) {
+                // Xóa toàn bộ localStorage trước khi lưu dữ liệu mới
+                localStorage.clear();
+                
+                // Lưu roles vào localStorage
                 localStorage.setItem("roles", data.roles);
-                navigate('/groups');
+                
+                // Kích hoạt sự kiện storage để các component khác biết rằng localStorage đã thay đổi
+                window.dispatchEvent(new Event('storage'));
+                
+                console.log("Login successful - roles:", data.roles);
+                
+                // Thêm độ trễ trước khi chuyển trang để đảm bảo localStorage được cập nhật đầy đủ
+                setIsLoading(true);
+                setTimeout(() => {
+                    navigate('/groups');
+                    setIsLoading(false);
+                }, 300);
             } else {
                 setError(data.message);
             }

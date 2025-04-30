@@ -16,7 +16,7 @@ function CalendarPage() {
         // Lấy classId từ URL bằng cách lấy tham số cuối cùng
         const pathParts = window.location.pathname.split('/');
         const id = classId || pathParts[pathParts.length - 1];
-        const response = await fetch(`http://localhost:8080/api/lessons/class/${id}`, {
+        const response = await fetch(`https://192.168.1.10:8080/api/lessons/class/${id}`, {
           credentials: 'include'
         });
         

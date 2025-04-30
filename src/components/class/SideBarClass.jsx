@@ -20,7 +20,7 @@ function SideBarClass() {
 
     const handleLogout = async () => {
         // try {
-        //     await fetch('http://localhost:8080/signout', {
+        //     await fetch('https://192.168.1.10:8080/signout', {
         //         method: 'POST',
         //         credentials: 'include'
         //     });
@@ -44,7 +44,7 @@ function SideBarClass() {
                 alt="Random"
             />
             <Box sx={styles.flex_title_dots}>
-                <Typography sx={styles.title}>Group_PBL5 - Du an ky thuat may tinh</Typography>
+                <Typography sx={styles.title}>Group_Auto Attendance System - Du an ky thuat may tinh</Typography>
                 <Button
                     sx={styles.dots}
                     id="basic-button"
