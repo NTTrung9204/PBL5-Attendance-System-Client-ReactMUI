@@ -43,7 +43,7 @@ function LoginPage() {
         setError('');
     
         try {
-            const response = await fetch('http://localhost:8080/signin', {
+            const response = await fetch('http://192.168.180.164:8080/signin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,6 +60,7 @@ function LoginPage() {
             }
             else if (response.ok) {
                 localStorage.setItem("roles", data.roles);
+                console.log(data.roles)
                 navigate('/groups');
             } else {
                 setError(data.message);

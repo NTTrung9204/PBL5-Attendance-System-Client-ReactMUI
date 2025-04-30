@@ -81,7 +81,7 @@ function FaceRegistrationPage() {
             console.log("Đang gửi yêu cầu đăng ký khuôn mặt với username:", username);
             console.log("Hình ảnh đang gửi:", images);
 
-            const faceResponse = await fetch('http://localhost:5000/api/face/register', {
+            const faceResponse = await fetch('http://192.168.180.164:5000/api/face/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

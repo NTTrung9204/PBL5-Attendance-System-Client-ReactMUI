@@ -20,7 +20,7 @@ function SideBarClass() {
 
     const handleLogout = async () => {
         // try {
-        //     await fetch('http://localhost:8080/signout', {
+        //     await fetch('http://192.168.180.164:8080/signout', {
         //         method: 'POST',
         //         credentials: 'include'
         //     });

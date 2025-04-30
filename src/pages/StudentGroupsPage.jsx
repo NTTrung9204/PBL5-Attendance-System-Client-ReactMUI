@@ -15,7 +15,7 @@ function StudentGroupsPage() {
 
   const fetchClasses = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/classes/student/my-classes', {
+      const response = await fetch('http://192.168.180.164:8080/api/classes/student/my-classes', {
         credentials: 'include'
       });
       if (!response.ok) {
