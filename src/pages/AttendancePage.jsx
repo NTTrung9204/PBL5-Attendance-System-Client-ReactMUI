@@ -59,10 +59,10 @@ export default function AttendancePage() {
         const updatedStudents = [...students];
         const studentIndex = updatedStudents.findIndex(s => s.id === selectedStudent.id);
         
-        if (studentIndex !== -1) {
+        if (studentIndex !== -1) {w
             updatedStudents[studentIndex] = {
                 ...updatedStudents[studentIndex],
-                attendanceType: newState
+                attendanceType: newStatew
             };
             setStudents(updatedStudents);
         }
@@ -97,7 +97,7 @@ export default function AttendancePage() {
     };
 
     const handleImageClick = (imagePath) => {
-        const originalPath = "http://localhost:5000/student_images/"
+        const originalPath = "http://192.168.180.164:5000/student_images/"
         setSelectedImage(originalPath + imagePath);
         setOpenImageDialog(true);
     };

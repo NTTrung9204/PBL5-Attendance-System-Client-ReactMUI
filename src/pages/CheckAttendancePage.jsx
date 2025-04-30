@@ -53,16 +53,20 @@ const CheckAttendancePage = () => {
                 setAttendanceResult(data.result)
                 if (data.result){
                     const checkin = data.result.checkinDate
-                    const dayOnly = checkin.split("T")[0]
-                    var timeOnly = checkin.split("T")[1] 
-                    const [hour, minute] = timeOnly.split(":");
-                    timeOnly = `${hour}:${minute}`;
-                    const tr = {
-                        dayOnly: dayOnly,
-                        timeOnly: timeOnly
-                    } 
-                    console.log(tr)
-                    setTimeResult(tr)
+                    console.log(checkin);
+                    if (checkin){
+                        const dayOnly = checkin.split("T")[0]
+                        var timeOnly = checkin.split("T")[1] 
+                        const [hour, minute] = timeOnly.split(":");
+                        timeOnly = `${hour}:${minute}`;
+                        const tr = {
+                            dayOnly: dayOnly,
+                            timeOnly: timeOnly
+                        } 
+                        console.log(tr)
+                        setTimeResult(tr)
+                    }
+                   
                 }
             }
         }
@@ -71,7 +75,7 @@ const CheckAttendancePage = () => {
     }, [])
 
     if (!student||!AttendanceResult||!TimeResult) {
-        return <div>Loading...</div>; 
+        return <div>...Loading...Không có thông tin điểm danh</div>; 
     }
    
 
@@ -84,17 +88,17 @@ const CheckAttendancePage = () => {
 
         <Grid container spacing={4}>
             {/* Student Info */}
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} >
             <Card elevation={3}>
-                <CardContent>
+                <CardContent  content>
                 <Typography variant="h5" gutterBottom>
                     Infomation
                 </Typography>
                 <CardMedia
                     component="img"
-                    image="student-photo.jpg"
-                    alt="Ảnh Sinh Viên"
-                    sx={{ height: 200, objectFit: 'cover', borderRadius: 2 }}
+                    image={`http://localhost:5000/student_images/${AttendanceResult.imgPath}`}
+                    alt="Kết Quả Nhận Diện"
+                    sx={{ height: 200, objectFit: 'cover', borderRadius: 2, marginTop: 2 }}
                 />
                 <Typography variant="body1" color="textSecondary">
                     <strong>Name:</strong> {student.name}
@@ -109,7 +113,7 @@ const CheckAttendancePage = () => {
                     <strong>Time:</strong> {TimeResult.timeOnly}
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
-                    <strong>Status:</strong> Đã Điểm Danh
+                    <strong>Status:</strong> Đã Điểm Danh thành công
                 </Typography>
                 </CardContent>
             </Card>
