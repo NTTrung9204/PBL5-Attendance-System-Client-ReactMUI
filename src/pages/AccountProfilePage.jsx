@@ -24,6 +24,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import api from '../api/axios';
 
 function AccountProfilePage() {
   const [userData, setUserData] = useState(null);
@@ -57,23 +58,17 @@ function AccountProfilePage() {
     try {
       const roles = localStorage.getItem('roles');
       const endpoint = roles.includes('ROLE_TEACHER') ? 
-        'https://192.168.1.10:8080/api/teacher' : 
-        'https://192.168.1.10:8080/api/student';
+        '/api/teacher' : 
+        '/api/student';
 
-      const response = await fetch(endpoint, {
-        credentials: 'include'
+      // Chuyển từ fetch sang axios
+      const response = await api.get(endpoint, {
+        withCredentials: true
       });
       
-      if (!response.ok) {
-        if (response.status === 401) {
-          navigate('/login');
-          return;
-        }
-        throw new Error('Network response was not ok');
-      }
-
-      const user = await response.json();
+      // Axios tự động trả về data và xử lý lỗi HTTP
       // For student API, extract user data from result
+      const user = response.data;
       const userData = roles.includes('ROLE_TEACHER') ? user : user.result;
       
       setUserData(userData);
@@ -84,13 +79,18 @@ function AccountProfilePage() {
         username: userData.username || ''
       });
 
-      // Set avatar URL
+      // Set avatar URL - sử dụng baseURL từ axios
       if (userData.username) {
-        setAvatarUrl(`https://192.168.1.10:8080/avatars/${userData.username}.jpg`);
+        setAvatarUrl(`${api.defaults.baseURL}/avatars/${userData.username}.jpg`);
       }
       
     } catch (err) {
       console.error('Error loading user profile:', err);
+      // Xử lý lỗi đặc biệt từ axios
+      if (err.response && err.response.status === 401) {
+        navigate('/login');
+        return;
+      }
       setError('Không thể tải thông tin tài khoản. Vui lòng thử lại sau.');
     } finally {
       setLoading(false);
@@ -133,18 +133,16 @@ function AccountProfilePage() {
     formData.append('file', file);
 
     try {
-      const response = await fetch('https://192.168.1.10:8080/api/avatars', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include'
+      // Chuyển từ fetch sang axios
+      await api.post('/api/avatars', formData, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data', // Axios sẽ tự động thiết lập khi thấy FormData
+        }
       });
 
-      if (!response.ok) {
-        throw new Error('Không thể cập nhật ảnh đại diện');
-      }
-
       // Update avatar URL with timestamp to force reload
-      setAvatarUrl(`https://192.168.1.10:8080/avatars/${userData.username}.jpg?t=${Date.now()}`);
+      setAvatarUrl(`${api.defaults.baseURL}/avatars/${userData.username}.jpg?t=${Date.now()}`);
       setSuccess('Cập nhật ảnh đại diện thành công!');
     } catch (err) {
       console.error('Error uploading avatar:', err);
@@ -161,35 +159,29 @@ function AccountProfilePage() {
     try {
       const roles = localStorage.getItem('roles');
       const endpoint = roles.includes('ROLE_TEACHER') ?
-        'https://192.168.1.10:8080/api/teacher' :
-        'https://192.168.1.10:8080/api/student';
+        '/api/teacher' :
+        '/api/student';
 
-      const response = await fetch(endpoint, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email, 
-          phone: formData.phone
-        }),
-        credentials: 'include'
+      // Chuyển từ fetch sang axios
+      const response = await api.put(endpoint, {
+        name: formData.name,
+        email: formData.email, 
+        phone: formData.phone
+      }, {
+        withCredentials: true
       });
 
-      const data = await response.json();
-      console.log(data);
-      
-      if (response.ok) {
-        setSuccess('Cập nhật thông tin tài khoản thành công!');
-        setIsEditing(false);
-        loadUserProfile();
-      } else {
-        throw new Error(data.message || 'Có lỗi xảy ra');
-      }
+      setSuccess('Cập nhật thông tin tài khoản thành công!');
+      setIsEditing(false);
+      loadUserProfile();
     } catch (err) {
-      setError(err.message);
       console.error('Error updating user profile:', err);
+      // Xử lý lỗi của axios
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || 'Có lỗi xảy ra');
+      } else {
+        setError('Không thể kết nối đến máy chủ');
+      }
     } finally {
       setLoading(false);
     }

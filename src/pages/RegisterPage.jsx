@@ -27,6 +27,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import api from '../api/axios';
 
 function RegisterPage() {
     const [username, setUsername] = useState('');
@@ -76,20 +77,10 @@ function RegisterPage() {
         };
 
         try {
-            const response = await fetch('https://192.168.1.10:8080/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(registrationData),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                console.log(data);
-                throw new Error(data.message);
-            }
-
+            // Chuyển từ fetch sang axios
+            await api.post('/register', registrationData);
+            
+            // Không cần kiểm tra response.ok vì axios tự động xử lý lỗi HTTP status
             setSuccess(true);
             setError('');
 
@@ -106,7 +97,12 @@ function RegisterPage() {
                 }, 2000);
             }
         } catch (error) {
-            setError(error.message);
+            // Xử lý lỗi từ axios
+            if (error.response && error.response.data) {
+                setError(error.response.data.message || 'Đã xảy ra lỗi khi đăng ký');
+            } else {
+                setError('Không thể kết nối đến máy chủ');
+            }
             console.error('Lỗi đăng ký:', error);
         } finally {
             setIsLoading(false);

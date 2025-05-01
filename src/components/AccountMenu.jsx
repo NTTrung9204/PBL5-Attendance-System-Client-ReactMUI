@@ -13,6 +13,7 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 
 export default function AccountMenu() {
   const navigate = useNavigate();
@@ -23,13 +24,12 @@ export default function AccountMenu() {
   React.useEffect(() => {
     const fetchAvatar = async () => {
       try {
-        const response = await fetch('https://192.168.1.10:8080/api/users/avatar', {
-          credentials: 'include'
+        // Chuyển đổi fetch sang axios
+        const response = await api.get('/api/users/avatar', {
+          withCredentials: true
         });
-        if (response.ok) {
-          const data = await response.json();
-          setAvatarPath(`https://192.168.1.10:8080${data.Path}`);
-        }
+        // Không cần kiểm tra response.ok và gọi json() vì axios tự xử lý
+        setAvatarPath(`http://localhost:8080${response.data.Path}`);
       } catch (error) {
         console.error('Error fetching avatar:', error);
       }
@@ -46,9 +46,9 @@ export default function AccountMenu() {
 
   const handleLogout = async () => {
     try {
-      await fetch('https://192.168.1.10:8080/signout', {
-        method: 'POST',
-        credentials: 'include'
+      // Chuyển đổi fetch sang axios
+      await api.post('/signout', {}, {
+        withCredentials: true
       });
       
       // Xóa toàn bộ localStorage để đảm bảo không còn thông tin cũ

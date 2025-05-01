@@ -3,6 +3,7 @@ import Card from '../components/Card';
 import { Box, Typography, CircularProgress, Alert, useTheme, useMediaQuery } from '@mui/material';
 import ToggleSection from '../components/ToggleSection';
 import AddGroupButton from '../components/AddGroupButton';
+import api from '../api/axios';
 
 function GroupsPage() {
   const theme = useTheme();
@@ -16,18 +17,24 @@ function GroupsPage() {
   const fetchClasses = async () => {
     try {
       console.log(localStorage.getItem('roles'));
-      const response = await fetch('https://192.168.1.10:8080/api/classes/teacher/my-classes', {
-        credentials: 'include'
+      const response = await api.get('/api/classes/teacher/my-classes', {
+        withCredentials: true
       });
-      if (!response.ok) {
-        throw new Error('Không thể kết nối đến máy chủ');
-      }
-      const data = await response.json();
-      setClasses(data);
+      
+      setClasses(response.data);
       setLoading(false);
     } catch (error) {
       console.error('Lỗi khi tải dữ liệu lớp học:', error);
-      setError(error.message);
+      
+      // Xử lý lỗi từ axios
+      if (error.response) {
+        setError(error.response.data.message || 'Không thể tải dữ liệu lớp học');
+      } else if (error.request) {
+        setError('Không thể kết nối đến máy chủ');
+      } else {
+        setError('Đã xảy ra lỗi khi tải dữ liệu');
+      }
+      
       setLoading(false);
     }
   };
