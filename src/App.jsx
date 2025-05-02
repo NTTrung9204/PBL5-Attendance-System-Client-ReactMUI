@@ -18,6 +18,7 @@ import FaceRegistrationPage from './pages/FaceRegistrationPage';
 import CheckAttendancePage from './pages/CheckAttendancePage';
 import AccountProfilePage from './pages/AccountProfilePage';
 import { AuthProvider } from './contexts/AuthContext';
+import ClassPage from './pages/ClassPage';
 
 // Component để xác định hiển thị trang GroupsPage hay StudentGroupsPage
 const GroupsRouter = () => {
@@ -73,7 +74,7 @@ function App() {
                       <Route path="/assignment" element={<AssignmentPage />} />
                       <Route path="/activities/*" element={<Activity />} />
                       <Route path="/chats/*" element={<Chat />} />
-                      <Route path="/class/*" element={<HomeClass />} />
+                      <Route path="/class/:id" element={<ClassPage />} />
                       <Route path="/calendar/*" element={<CalendarPage />} />
                       <Route path="/calendar/attendance/*" element={<AttendancePage />} />
                       <Route path="/calendar/attendance/check/*" element={<CheckAttendancePage />} />

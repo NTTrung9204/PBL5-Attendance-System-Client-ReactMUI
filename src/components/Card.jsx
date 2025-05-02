@@ -16,9 +16,10 @@ function Card({groupTeamName, classId}) {
 
     const menuItemsList = [
         {
-            title: "Join",
+            title: "Information",
             onClick: (e) => {
                 e.stopPropagation();
+                navigate(`/class/${classId}`)
                 console.log("join")
                 // navigate("/class")
             }
@@ -97,9 +98,9 @@ function Card({groupTeamName, classId}) {
                             {groupTeamName || "Không có tên"}
                         </span>
                     </Tooltip>
-                    <MenuButton
-                        menuItem={menuItemsList}
-                    />
+                    <div onClick={(e) => e.stopPropagation()}>
+                        <MenuButton menuItem={menuItemsList} />
+                    </div>
                 </Box>
                 <Box
                     sx={{marginTop: "10px"}}
