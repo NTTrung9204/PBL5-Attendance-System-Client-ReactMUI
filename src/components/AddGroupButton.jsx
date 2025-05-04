@@ -69,7 +69,7 @@ function AddGroupButton({ onClassAdded }) {
                 schedule: selectedDaysWithTime
             };
             
-            const response = await fetch('https://192.168.1.10:8080/api/classes', {
+            const response = await fetch('https://localhost:8080/api/classes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
