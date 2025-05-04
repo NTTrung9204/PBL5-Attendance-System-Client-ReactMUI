@@ -16,9 +16,10 @@ function StudentGroupsPage() {
 
   const fetchClasses = async () => {
     try {
-      // Chuyển từ fetch sang axios instance
-      const response = await api.get('/api/classes/student/my-classes', {
-        withCredentials: true
+
+      const response = await fetch('http://localhost:8080/api/classes/student/my-classes', {
+        credentials: 'include'
+
       });
       
       // Axios tự động chuyển đổi response thành JSON và kiểm tra HTTP status

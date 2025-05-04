@@ -77,10 +77,27 @@ function RegisterPage() {
         };
 
         try {
+<<<<<<< HEAD
+            const response = await fetch('http://localhost:8080/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(registrationData),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                console.log(data);
+                throw new Error(data.message);
+            }
+
+=======
             // Chuyển từ fetch sang axios
             await api.post('/register', registrationData);
             
             // Không cần kiểm tra response.ok vì axios tự động xử lý lỗi HTTP status
+>>>>>>> cc2bf57140445cc38ccba3cd29a64977ead42971
             setSuccess(true);
             setError('');
 

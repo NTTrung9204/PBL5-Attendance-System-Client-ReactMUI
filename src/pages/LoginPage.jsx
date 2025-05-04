@@ -45,8 +45,18 @@ function LoginPage() {
 
 
         try {
+<<<<<<< HEAD
+            const response = await fetch('http://localhost:8080/signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+                credentials: 'include',
+=======
             const response = await api.post('/signin', { username, password }, {
                 withCredentials: true,
+>>>>>>> cc2bf57140445cc38ccba3cd29a64977ead42971
             });
 
             // axios tự động trả về data từ response
