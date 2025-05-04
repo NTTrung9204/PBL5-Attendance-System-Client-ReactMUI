@@ -43,7 +43,7 @@ function LoginPage() {
         setError('');
     
         try {
-            const response = await fetch('http://192.168.180.164:8080/signin', {
+            const response = await fetch('http://localhost:8080/signin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
