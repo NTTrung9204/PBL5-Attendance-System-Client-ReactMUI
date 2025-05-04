@@ -25,8 +25,8 @@ function Header() {
       try {
         // Chọn API endpoint dựa trên vai trò người dùng
         const endpoint = userRole.includes('TEACHER') 
-          ? 'http://localhost:8080/api/classes/teacher/my-classes' 
-          : 'http://localhost:8080/api/classes/student/my-classes';
+          ? 'https://localhost:8080/api/classes/teacher/my-classes' 
+          : 'https://localhost:8080/api/classes/student/my-classes';
         
         const response = await fetch(endpoint, {
           credentials: 'include'
@@ -92,11 +92,7 @@ function Header() {
         }}
       >
         <Typography variant="h6" sx={{color: '#000', fontWeight: '300'}}>
-<<<<<<< HEAD
           PBL5 {userRole.includes('TEACHER') ? '(Giáo viên)' : '(Học sinh)'}
-=======
-          Auto Attendance System
->>>>>>> cc2bf57140445cc38ccba3cd29a64977ead42971
         </Typography>
         
         <Box sx={{ 

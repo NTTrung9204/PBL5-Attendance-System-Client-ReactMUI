@@ -16,14 +16,9 @@ function GroupsPage() {
 
   const fetchClasses = async () => {
     try {
-<<<<<<< HEAD
-      const response = await fetch('http://localhost:8080/api/classes/teacher/my-classes', {
-        credentials: 'include'
-=======
       console.log(localStorage.getItem('roles'));
       const response = await api.get('/api/classes/teacher/my-classes', {
         withCredentials: true
->>>>>>> cc2bf57140445cc38ccba3cd29a64977ead42971
       });
       
       setClasses(response.data);

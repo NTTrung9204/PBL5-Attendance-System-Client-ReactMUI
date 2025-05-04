@@ -17,12 +17,10 @@ function StudentGroupsPage() {
   const fetchClasses = async () => {
     try {
 
-      const response = await fetch('http://localhost:8080/api/classes/student/my-classes', {
-        credentials: 'include'
-
+      const response = await api.get('/api/classes/student/my-classes', {
+        withCredentials: true
       });
       
-      // Axios tự động chuyển đổi response thành JSON và kiểm tra HTTP status
       setClasses(response.data);
       setLoading(false);
     } catch (error) {
@@ -145,7 +143,7 @@ function StudentGroupsPage() {
           >
             {error}
           </Alert>
-        ) : classes.length === 0 ? (
+        ) : !classes || classes.length === 0 ? (
           <Box 
             sx={{ 
               textAlign: 'center', 
