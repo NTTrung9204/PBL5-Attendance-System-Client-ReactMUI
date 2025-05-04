@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import CalendarCard from "../components/Calendar/CalendarCard";
 import { Route, Routes, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import api from "../api/axios";
 
 function CalendarPage() {
   const { classId } = useParams();
@@ -16,21 +17,32 @@ function CalendarPage() {
         // Lấy classId từ URL bằng cách lấy tham số cuối cùng
         const pathParts = window.location.pathname.split('/');
         const id = classId || pathParts[pathParts.length - 1];
-        const response = await fetch(`http://192.168.180.164:8080/api/lessons/class/${id}`, {
-          credentials: 'include'
+        console.log("Lấy classId từ URL:", id);
+        
+        // Chuyển từ fetch sang axios
+        const response = await api.get(`/api/lessons/class/${id}`, {
+          withCredentials: true
         });
         
-        if (!response.ok) {
-          throw new Error('Không thể kết nối đến máy chủ');
-        }
-        
-        const data = await response.json();
-        console.log("Dữ liệu lịch học nhận được:", data);
-        setLessons(data);
+        // Axios tự động trả về response.data và xử lý lỗi HTTP
+        console.log("Dữ liệu lịch học nhận được:", response.data);
+        setLessons(response.data);
         setLoading(false);
       } catch (error) {
         console.error('Lỗi khi tải dữ liệu lịch học:', error);
-        setError(error.message);
+        
+        // Xử lý lỗi từ axios
+        if (error.response) {
+          // Server trả về response với status code nằm ngoài phạm vi 2xx
+          setError(error.response.data.message || 'Lỗi máy chủ');
+        } else if (error.request) {
+          // Yêu cầu đã được gửi nhưng không nhận được phản hồi
+          setError('Không thể kết nối đến máy chủ');
+        } else {
+          // Có lỗi khi thiết lập request
+          setError(error.message);
+        }
+        
         setLoading(false);
       }
     };

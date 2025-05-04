@@ -11,12 +11,32 @@ import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 
 export default function AccountMenu() {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [avatarPath, setAvatarPath] = React.useState('');
   const open = Boolean(anchorEl);
+
+  React.useEffect(() => {
+    const fetchAvatar = async () => {
+      try {
+        // Chuyển đổi fetch sang axios
+        const response = await api.get('/api/users/avatar', {
+          withCredentials: true
+        });
+        // Không cần kiểm tra response.ok và gọi json() vì axios tự xử lý
+        setAvatarPath(`http://localhost:8080${response.data.Path}`);
+      } catch (error) {
+        console.error('Error fetching avatar:', error);
+      }
+    };
+    fetchAvatar();
+  }, []);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -26,14 +46,23 @@ export default function AccountMenu() {
 
   const handleLogout = async () => {
     try {
-      await fetch('http://192.168.180.164:8080/signout', {
-        method: 'POST',
-        credentials: 'include'
+      // Chuyển đổi fetch sang axios
+      await api.post('/signout', {}, {
+        withCredentials: true
       });
-      navigate('/');
+      
+      // Xóa toàn bộ localStorage để đảm bảo không còn thông tin cũ
+      localStorage.clear();
+      // Điều hướng đến trang đăng nhập thay vì trang chủ
+      navigate('/login');
     } catch (error) {
       console.error('Lỗi đăng xuất:', error);
     }
+    handleClose();
+  };
+
+  const handleNavigateToProfile = () => {
+    navigate('/profile');
     handleClose();
   };
 
@@ -49,7 +78,12 @@ export default function AccountMenu() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>Tr</Avatar>
+            <Avatar 
+              sx={{ width: 32, height: 32 }}
+              src={avatarPath}
+            >
+              Tr
+            </Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -90,21 +124,24 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>
-          <Avatar /> My account
+        <MenuItem onClick={handleNavigateToProfile}>
+          <ListItemIcon>
+            <AccountCircleIcon fontSize="small" />
+          </ListItemIcon>
+          Tài khoản của tôi
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
-          Settings
+          Cài đặt
         </MenuItem>
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          Logout
+          Đăng xuất
         </MenuItem>
       </Menu>
     </React.Fragment>

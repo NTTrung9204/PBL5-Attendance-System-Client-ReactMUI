@@ -54,7 +54,7 @@ function ChatTextCard(props){
                 </div>
                 <div style={styles.messageContent}>
                     Dạ em chào thầy, nhóm em xin phép gửi đề tài đề xuất của nhóm a.<br />
-                    Đề tài: Hệ thống điểm danh lớp học tự động tích hợp chức năng quản lý lớp học (PBL5).<br />
+                    Đề tài: Hệ thống điểm danh lớp học tự động tích hợp chức năng quản lý lớp học (Auto Attendance System).<br />
                     Mô tả:<br />
                     - Nền tảng ứng dụng: Web tích hợp AI<br />
                     - Đối tượng sử dụng: Giảng viên, sinh viên<br />

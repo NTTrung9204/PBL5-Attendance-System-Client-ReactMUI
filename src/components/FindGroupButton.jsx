@@ -44,7 +44,11 @@ function FindGroupButton() {
     setClassInfo(null);
     
     try {
+<<<<<<< HEAD
       const response = await fetch(`http://localhost:8080/api/classes/${classId}`, {
+=======
+      const response = await fetch(`https://192.168.1.10:8080/api/classes/${classId}`, {
+>>>>>>> cc2bf57140445cc38ccba3cd29a64977ead42971
         credentials: 'include'
       });
       
@@ -69,7 +73,11 @@ function FindGroupButton() {
     setError(null);
     
     try {
+<<<<<<< HEAD
       const response = await fetch(`http://localhost:8080/api/student-class/join/${classInfo.id}`, {
+=======
+      const response = await fetch(`https://192.168.1.10:8080/api/student-class/join/${classInfo.id}`, {
+>>>>>>> cc2bf57140445cc38ccba3cd29a64977ead42971
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -78,7 +86,8 @@ function FindGroupButton() {
       });
       
       if (!response.ok) {
-        throw new Error('Không thể tham gia lớp học này');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Không thể tham gia lớp học này');
       }
       
       setJoinSuccess(true);

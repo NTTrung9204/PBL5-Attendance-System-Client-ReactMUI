@@ -7,72 +7,63 @@ const CheckAttendancePage = () => {
     const [AttendanceResult, setAttendanceResult] = useState()
     const [TimeResult, setTimeResult] = useState()
 
-
-    useEffect(()=>{
+    useEffect(() => {
         const handleInfo = async() => {
-            fetch("http://192.168.180.164:8080/api/student", {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include'
-            }).then(reponse => {
-                if (!reponse.ok){
-                    throw new Error('Không thể lấy dữ liệu sinh viên')
-                }
-              
-                return reponse.json()
-            }).then(data=>{
-                console.log(JSON.stringify(data))
-                console.log(data.result)
-                setStudent(data.result)
-            })
-        }
-        handleInfo()
-    }, [])
+            try {
+                // Chuyển từ fetch sang axios
+                const response = await api.get("/api/student", {
+                    withCredentials: true
+                });
+                
+                console.log(JSON.stringify(response.data));
+                console.log(response.data.result);
+                setStudent(response.data.result);
+            } catch (error) {
+                console.error('Không thể lấy dữ liệu sinh viên:', error);
+            }
+        };
+        handleInfo();
+    }, []);
 
-    useEffect(()=> {
+    useEffect(() => {
         const pathParts = location.pathname.split('/');
         const lessionId = pathParts[pathParts.length - 1];
-        const handleAttendanceResult = async ()=>{
-            const res = await fetch(`http://192.168.180.164:8080/api/attendance/result/${lessionId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include'
-            })
-
-            if (!res.ok){
-                console.log(res)
-                throw new Error('Không thể lấy dữ liệu sinh viên')
-            }else{
-                const data =await res.json()
-                console.log(JSON.stringify(data))
-                console.log(data.result)
-                setAttendanceResult(data.result)
-                if (data.result){
-                    const checkin = data.result.checkinDate
+        
+        const handleAttendanceResult = async () => {
+            try {
+                // Chuyển từ fetch sang axios
+                const response = await api.get(`/api/attendance/result/${lessionId}`, {
+                    withCredentials: true
+                });
+                
+                const data = response.data;
+                console.log(JSON.stringify(data));
+                console.log(data.result);
+                setAttendanceResult(data.result);
+                
+                if (data.result) {
+                    const checkin = data.result.checkinDate;
                     console.log(checkin);
-                    if (checkin){
-                        const dayOnly = checkin.split("T")[0]
-                        var timeOnly = checkin.split("T")[1] 
+                    if (checkin) {
+                        const dayOnly = checkin.split("T")[0];
+                        var timeOnly = checkin.split("T")[1];
                         const [hour, minute] = timeOnly.split(":");
                         timeOnly = `${hour}:${minute}`;
                         const tr = {
                             dayOnly: dayOnly,
                             timeOnly: timeOnly
-                        } 
-                        console.log(tr)
-                        setTimeResult(tr)
+                        };
+                        console.log(tr);
+                        setTimeResult(tr);
                     }
-                   
                 }
+            } catch (error) {
+                console.error('Không thể lấy dữ liệu điểm danh:', error);
             }
-        }
-        handleAttendanceResult()
-      
-    }, [])
+        };
+        
+        handleAttendanceResult();
+    }, [location.pathname]);
 
     if (!student||!AttendanceResult||!TimeResult) {
         return <div>...Loading...Không có thông tin điểm danh</div>; 

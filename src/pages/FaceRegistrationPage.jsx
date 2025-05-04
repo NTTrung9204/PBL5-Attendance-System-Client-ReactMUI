@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Box, Button, Typography, Grid, Paper, IconButton } from '@mui/material';
+import { Box, Button, Typography, Grid, Paper, IconButton, Alert } from '@mui/material';
 import { CameraAlt, Delete, Check } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 function FaceRegistrationPage() {
     const [images, setImages] = useState([]);
     const [isCapturing, setIsCapturing] = useState(false);
+    const [cameraError, setCameraError] = useState("");
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const navigate = useNavigate();
@@ -18,6 +19,7 @@ function FaceRegistrationPage() {
         try {
             console.log("Bắt đầu khởi động camera...");
             setIsCapturing(true);
+            setCameraError("");
             
             await new Promise(resolve => setTimeout(resolve, 100));
             
@@ -40,6 +42,17 @@ function FaceRegistrationPage() {
         } catch (err) {
             console.error('Lỗi khi khởi động camera:', err);
             setIsCapturing(false);
+            if (err.name === 'NotAllowedError') {
+                setCameraError("Camera đã bị chặn. Vui lòng cho phép truy cập camera trong cài đặt trình duyệt.");
+            } else if (err.name === 'NotFoundError') {
+                setCameraError("Không tìm thấy camera. Vui lòng kiểm tra kết nối camera.");
+            } else if (err.name === 'NotReadableError') {
+                setCameraError("Camera đang được sử dụng bởi ứng dụng khác. Vui lòng đóng các ứng dụng đang sử dụng camera.");
+            } else if (err.name === 'SecurityError') {
+                setCameraError("Truy cập camera bị chặn do vấn đề bảo mật. Vui lòng truy cập qua HTTPS hoặc localhost.");
+            } else {
+                setCameraError("Lỗi không xác định khi khởi động camera: " + err.message);
+            }
         }
     };
 
@@ -114,6 +127,12 @@ function FaceRegistrationPage() {
                 <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
                     Vui lòng chụp ít nhất 3 ảnh khuôn mặt ở các góc độ khác nhau
                 </Typography>
+
+                {cameraError && (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                        {cameraError}
+                    </Alert>
+                )}
 
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>

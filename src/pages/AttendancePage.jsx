@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import SchoolIcon from '@mui/icons-material/School';
+import api from "../api/axios";
 
 export default function AttendancePage() {
     const location = useLocation();
@@ -54,7 +55,7 @@ export default function AttendancePage() {
 
     const handleStateChange = async (newState) => {
         if (!selectedStudent) return;
-        console.log("aa")
+        
         // Cập nhật UI ngay lập tức
         const updatedStudents = [...students];
         const studentIndex = updatedStudents.findIndex(s => s.id === selectedStudent.id);
@@ -68,24 +69,16 @@ export default function AttendancePage() {
         }
         
         try {
-            const response = await fetch('http://192.168.180.164:8080/api/attendance/update', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    lessonId: parseInt(lessonId),
-                    studentId: selectedStudent.id,
-                    checkinDate: new Date().toISOString(),
-                    imgPath: "",
-                    status: newState
-                }),
-                credentials: 'include'
+            await api.post('/api/attendance/update', {
+                lessonId: parseInt(lessonId),
+                studentId: selectedStudent.id,
+                checkinDate: new Date().toISOString(),
+                imgPath: "",
+                status: newState
+            }, {
+                withCredentials: true
             });
-
-            if (!response.ok) {
-                throw new Error('Không thể cập nhật trạng thái điểm danh');
-            }
+            console.log(new Date().toISOString());
         } catch (error) {
             console.error('Lỗi khi cập nhật trạng thái:', error);
         }
@@ -110,16 +103,12 @@ export default function AttendancePage() {
                 throw new Error('Không tìm thấy ID lớp học');
             }
             
-            const response = await fetch(`http://192.168.180.164:8080/api/classes/${classId}/students`, {
-                credentials: 'include'
+            const response = await api.get(`/api/classes/${classId}/students`, {
+                withCredentials: true
             });
-            if (!response.ok) {
-                throw new Error('Không thể kết nối đến máy chủ');
-            }
-            const data = await response.json();
             
             // Tạo mảng sinh viên với thông tin cơ bản
-            const studentsWithBasicInfo = data.map(student => ({
+            const studentsWithBasicInfo = response.data.map(student => ({
                 ...student,
                 state: false, // Giá trị mặc định
                 time: "--",
@@ -131,24 +120,14 @@ export default function AttendancePage() {
             const studentsWithAttendance = await Promise.all(
                 studentsWithBasicInfo.map(async (student) => {
                     try {
-                        const attendanceResponse = await fetch('http://192.168.180.164:8080/api/attendance/get_status', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                lessonId: parseInt(lessonId),
-                                studentId: student.id
-                            }),
-                            credentials: 'include'
+                        const attendanceResponse = await api.post('/api/attendance/get_status', {
+                            lessonId: parseInt(lessonId),
+                            studentId: student.id
+                        }, {
+                            withCredentials: true
                         });
                         
-                        if (!attendanceResponse.ok) {
-                            console.error(`Lỗi khi lấy trạng thái điểm danh cho sinh viên ${student.id}`);
-                            return student;
-                        }
-                        
-                        const attendanceData = await attendanceResponse.json();
+                        const attendanceData = attendanceResponse.data;
                         
                         // Sử dụng trực tiếp status từ API
                         let attendanceType = attendanceData.status || "--";
@@ -189,48 +168,31 @@ export default function AttendancePage() {
         
         const fetchLessonData = async () => {
             try {
-                const response = await fetch(`http://192.168.180.164:8080/api/lessons/${lessonId}`, {
-                    credentials: 'include'
+                const response = await api.get(`/api/lessons/${lessonId}`, {
+                    withCredentials: true
                 });
-                if (!response.ok) {
-                    if (response.status === 404) {
-                        throw new Error('Không tìm thấy bài học với ID đã cung cấp');
-                    }
-                    throw new Error('Không thể kết nối đến máy chủ');
-                }
-                const data = await response.json();
-                // console.log("Dữ liệu bài học nhận được:", data);
-                setLessonData(data);
-                // // Sau khi có lesson data, lấy thông tin về class
-                return data.class_id;
+                
+                setLessonData(response.data);
+                return response.data.class_id;
             } catch (error) {
                 console.error('Lỗi khi tải dữ liệu bài học:', error);
-                setError(error.message);
+                if (error.response && error.response.status === 404) {
+                    setError('Không tìm thấy bài học với ID đã cung cấp');
+                } else {
+                    setError('Không thể kết nối đến máy chủ');
+                }
                 return null;
             }
         };
 
         const fetchClassData = async (classId) => {
             try {
-                const response = await fetch(`http://192.168.180.164:8080/api/classes/lesson/${lessonId}`, {
-                    credentials: 'include'
+                const response = await api.get(`/api/classes/lesson/${lessonId}`, {
+                    withCredentials: true
                 });
-                if (!response.ok) {
-                    throw new Error('Không thể kết nối đến máy chủ');
-                }
-                const data = await response.json();
-                // console.log("Dữ liệu lớp học nhận được:", data);
                 
-                // Vấn đề: setState là bất đồng bộ, không cập nhật state ngay lập tức
-                // Giải pháp: Sử dụng biến data trực tiếp thay vì classData
-                setClassData(data);
-                
-                // Đây là lý do tại sao classData vẫn là null sau khi gọi setClassData
-                // React gom các cập nhật state và thực hiện chúng sau khi hàm này hoàn tất
-                // console.log("Class data (từ biến cục bộ):", data);
-                
-                // Trả về class ID để fetch students
-                return data.class_id;
+                setClassData(response.data);
+                return response.data.class_id;
             } catch (error) {
                 console.error('Lỗi khi tải dữ liệu lớp học:', error);
                 setError(error.message);

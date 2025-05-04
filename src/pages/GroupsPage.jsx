@@ -3,6 +3,7 @@ import Card from '../components/Card';
 import { Box, Typography, CircularProgress, Alert, useTheme, useMediaQuery } from '@mui/material';
 import ToggleSection from '../components/ToggleSection';
 import AddGroupButton from '../components/AddGroupButton';
+import api from '../api/axios';
 
 function GroupsPage() {
   const theme = useTheme();
@@ -15,24 +16,44 @@ function GroupsPage() {
 
   const fetchClasses = async () => {
     try {
+<<<<<<< HEAD
       const response = await fetch('http://localhost:8080/api/classes/teacher/my-classes', {
         credentials: 'include'
+=======
+      console.log(localStorage.getItem('roles'));
+      const response = await api.get('/api/classes/teacher/my-classes', {
+        withCredentials: true
+>>>>>>> cc2bf57140445cc38ccba3cd29a64977ead42971
       });
-      if (!response.ok) {
-        throw new Error('Không thể kết nối đến máy chủ');
-      }
-      const data = await response.json();
-      setClasses(data);
+      
+      setClasses(response.data);
       setLoading(false);
     } catch (error) {
       console.error('Lỗi khi tải dữ liệu lớp học:', error);
-      setError(error.message);
+      
+      // Xử lý lỗi từ axios
+      if (error.response) {
+        setError(error.response.data.message || 'Không thể tải dữ liệu lớp học');
+      } else if (error.request) {
+        setError('Không thể kết nối đến máy chủ');
+      } else {
+        setError('Đã xảy ra lỗi khi tải dữ liệu');
+      }
+      
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchClasses();
+    const roles = localStorage.getItem('roles');
+    if (roles && roles.includes('ROLE_TEACHER')) {
+      console.log("Fetching teacher classes with roles:", roles);
+      fetchClasses();
+    } else {
+      console.warn("GroupsPage accessed with non-teacher role:", roles);
+      setError("Bạn không có quyền truy cập trang này");
+      setLoading(false);
+    }
   }, []);
 
   const getGridColumns = () => {
