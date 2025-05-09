@@ -25,8 +25,8 @@ function Header() {
       try {
         // Chọn API endpoint dựa trên vai trò người dùng
         const endpoint = userRole.includes('TEACHER') 
-          ? 'https://localhost:8080/api/classes/teacher/my-classes' 
-          : 'https://localhost:8080/api/classes/student/my-classes';
+          ? 'https://192.168.180.164:8080/api/classes/teacher/my-classes' 
+          : 'https://192.168.180.164:8080/api/classes/student/my-classes';
         
         const response = await fetch(endpoint, {
           credentials: 'include'

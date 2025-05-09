@@ -65,7 +65,7 @@ function App() {
                       width: '100%',
                       bgcolor: 'background.default',
                       padding: 0,
-                      overflow: "hidden !important",
+                      overflow: "auto !important",
                     }}
                   >
                     <Routes>

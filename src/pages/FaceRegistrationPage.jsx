@@ -49,7 +49,7 @@ function FaceRegistrationPage() {
             } else if (err.name === 'NotReadableError') {
                 setCameraError("Camera đang được sử dụng bởi ứng dụng khác. Vui lòng đóng các ứng dụng đang sử dụng camera.");
             } else if (err.name === 'SecurityError') {
-                setCameraError("Truy cập camera bị chặn do vấn đề bảo mật. Vui lòng truy cập qua HTTPS hoặc localhost.");
+                setCameraError("Truy cập camera bị chặn do vấn đề bảo mật. Vui lòng truy cập qua HTTPS hoặc 192.168.180.164.");
             } else {
                 setCameraError("Lỗi không xác định khi khởi động camera: " + err.message);
             }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Box, Paper, Grid, Card, CardContent, CardMedia } from '@mui/material';
+import api from "../api/axios";
 
 const CheckAttendancePage = () => {
 
@@ -87,9 +88,9 @@ const CheckAttendancePage = () => {
                 </Typography>
                 <CardMedia
                     component="img"
-                    image={`http://localhost:5000/student_images/${AttendanceResult.imgPath}`}
+                    image={`http://192.168.180.164:5000/student_images/${AttendanceResult.imgPath}`}
                     alt="Kết Quả Nhận Diện"
-                    sx={{ height: 200, objectFit: 'cover', borderRadius: 2, marginTop: 2 }}
+                    sx={{width: "50%", objectFit: 'cover', borderRadius: 2, marginTop: 2, textAlign: 'center', margin: '0 auto'}}
                 />
                 <Typography variant="body1" color="textSecondary">
                     <strong>Name:</strong> {student.name}
@@ -110,28 +111,8 @@ const CheckAttendancePage = () => {
             </Card>
             </Grid>
 
-            {/* Face Recognition */}
-            <Grid item xs={12} sm={6}>
-            <Card elevation={3}>
-                <CardContent>
-                <Typography variant="h5" gutterBottom>
-                    Face Recognize Result
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                    <strong>Trạng Thái:</strong> Success
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                    <strong>Độ Chính Xác:</strong> 98%
-                </Typography>
-                <CardMedia
-                    component="img"
-                    image={`http://localhost:5000/student_images/${AttendanceResult.imgPath}`}
-                    alt="Kết Quả Nhận Diện"
-                    sx={{ height: 200, objectFit: 'cover', borderRadius: 2, marginTop: 2 }}
-                />
-                </CardContent>
-            </Card>
-            </Grid>
+
+          
         </Grid>
 
         {/* Footer */}

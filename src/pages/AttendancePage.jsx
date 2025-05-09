@@ -17,6 +17,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import SchoolIcon from '@mui/icons-material/School';
 import api from "../api/axios";
+import Avatar from '@mui/material/Avatar';
 
 export default function AttendancePage() {
     const location = useLocation();
@@ -327,6 +328,7 @@ export default function AttendancePage() {
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                         <TableRow>
+                            <TableCell sx={{ color: "#828282", textAlign: "center" }}>Avatar</TableCell>
                             <TableCell sx={{ color: "#828282", textAlign: "center" }}>Student Name</TableCell>
                             <TableCell sx={{ color: "#828282", textAlign: "center" }}>State</TableCell>
                             <TableCell sx={{ color: "#828282", textAlign: "center" }}>Time</TableCell>
@@ -339,6 +341,13 @@ export default function AttendancePage() {
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
+                                <TableCell sx={{ textAlign: "center" }}>
+                                    <Avatar 
+                                        src={`${api.defaults.baseURL}/avatars/${row.username}.jpg?t=${Date.now()}`}
+                                        alt={row.name}
+                                        sx={{ width: 40, height: 40, margin: '0 auto' }}
+                                    />
+                                </TableCell>
                                 <TableCell component="th" scope="row" sx={{ textAlign: "center" }}>
                                     {row.name}
                                 </TableCell>
