@@ -10,28 +10,34 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Avatar,
   CircularProgress,
   Alert,
   List,
   ListItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  useTheme,
+  Fade,
+  Zoom
 } from '@mui/material';
-import { data, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PersonIcon from '@mui/icons-material/Person';
 import GroupIcon from '@mui/icons-material/Group';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import ScheduleIcon from '@mui/icons-material/Schedule';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { motion } from 'framer-motion';
 
 function ClassPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const theme = useTheme();
   const [classData, setClassData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const gradientBg = `linear-gradient(135deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`;
   
   const dayTranslations = {
     'MONDAY': 'Thứ Hai',
@@ -46,50 +52,10 @@ function ClassPage() {
   useEffect(() => {
     const fetchClassData = async () => {
       try {
-        // Mock data instead of API call
-        const resClass = await api.get(`/api/classes/${id}`, {
+        const response = await api.get(`/api/classes/${id}/with-schedule`, {
           withCredentials: true
         });
 
-        const dataClass = resClass.data;
-
-        const resTeacher = await api.get(`/api/teacher/${dataClass?.teacherId}`, {
-          withCredentials: true
-        });
-
-        const dataTeacher = resTeacher.data;
-        // console.log(dataTeacher);
-        const resLesson = await api.get(`/api/lessons/schedule/${id}`, {
-          withCredentials: true
-        });
-        const dataLesson = resLesson.data;
-        // console.log(dataLesson);
-
-        const resStudent = await api.get(`/api/classes/${id}/students`, {
-          withCredentials: true
-        });
-        const dataStudent = resStudent.data;
-        // console.log(dataStudent);
-
-        const mockResponse = {
-            data: {
-                id: id,
-                name: dataClass?.name || "Not found",
-                active: true,
-                createdAt: dataClass?.createdAt || "Not found",
-                weeks: dataClass?.weeks || 0,  
-                teacher: {
-                    id: "T001",
-                    name: dataTeacher?.name || "Not found",
-                },
-                studentCount: dataStudent?.length || 0,
-                schedule: dataLesson || [],
-                description: "Mô tả học phần."
-            }
-        };
-
-        const response = mockResponse;
-        
         setClassData(response.data);
         setLoading(false);
       } catch (error) {
@@ -102,17 +68,7 @@ function ClassPage() {
     fetchClassData();
   }, [id]);
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  };
-
   const formatTime = (timeString) => {
-    // Assuming timeString format is "HH:mm:ss"
     if (!timeString) return "--:--";
     const [hours, minutes] = timeString.split(':');
     return `${hours}:${minutes}`;
@@ -120,8 +76,14 @@ function ClassPage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-        <CircularProgress />
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '80vh',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)'
+      }}>
+        <CircularProgress size={60} thickness={4} />
       </Box>
     );
   }
@@ -129,116 +91,278 @@ function ClassPage() {
   if (error) {
     return (
       <Box sx={{ p: 3 }}>
-        <Alert severity="error">{error}</Alert>
+        <Fade in={true}>
+          <Alert severity="error" sx={{ 
+            borderRadius: 2,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+          }}>
+            {error}
+          </Alert>
+        </Fade>
       </Box>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-        <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            {classData?.name || 'Thông tin lớp học'}
+    <Box sx={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)',
+      py: 4
+    }}>
+      <Container maxWidth="lg">
+        <Fade in={true}>
+          <Paper 
+            elevation={3} 
+            sx={{ 
+              p: 4, 
+              mb: 4,
+              borderRadius: 2,
+              background: 'rgba(255, 255, 255, 0.9)',
+              backdropFilter: 'blur(10px)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+            }}
+          >
+            <Box sx={{ 
+              mb: 4, 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center' 
+            }}>
+              <Typography 
+                variant="h4" 
+                component="h1" 
+                sx={{
+                  background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontWeight: 'bold'
+                }}
+              >
+                {classData?.name || 'Thông tin lớp học'}
+              </Typography>
+              <Chip
+                label="Xem lịch học"
+                color="primary"
+                clickable
+                onClick={() => navigate(`/calendar/${classData?.classId}`)}
+                sx={{
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 12px rgba(33, 150, 243, 0.3)'
+                  }
+                }}
+              />
+            </Box>
+
+            <Divider sx={{ 
+              mb: 4,
+              background: 'linear-gradient(90deg, transparent, #2196F3, transparent)',
+              height: '2px'
+            }} />
+
+            <Grid container spacing={4}>
+              {/* Thông tin chung */}
+              <Grid item xs={12} md={6}>
+                <Zoom in={true} style={{ transitionDelay: '100ms' }}>
+                  <Card sx={{
+                    height: '100%',
+                    borderRadius: 2,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 12px 24px rgba(0,0,0,0.1)'
+                    }
+                  }}>
+                    <CardHeader 
+                      title="Thông tin chung"
+                      sx={{
+                        background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                        color: 'white',
+                        borderRadius: '8px 8px 0 0'
+                      }}
+                    />
+                    <CardContent>
+                      <List>
+                        <ListItem sx={{ py: 1.5 }}>
+                          <ListItemIcon sx={{ color: theme.palette.primary.main }}>
+                            <DateRangeIcon />
+                          </ListItemIcon>
+                          <ListItemText 
+                            primary="Mã lớp"
+                            secondary={classData?.classId}
+                            primaryTypographyProps={{ fontWeight: 'bold' }}
+                          />
+                        </ListItem>
+                        <ListItem sx={{ py: 1.5 }}>
+                          <ListItemIcon sx={{ color: theme.palette.primary.main }}>
+                            <AccessTimeIcon />
+                          </ListItemIcon>
+                          <ListItemText 
+                            primary="Ngày tạo" 
+                            secondary={classData?.createdAt}
+                            primaryTypographyProps={{ fontWeight: 'bold' }}
+                          />
+                        </ListItem>
+                        <ListItem sx={{ py: 1.5 }}>
+                          <ListItemIcon sx={{ color: theme.palette.primary.main }}>
+                            <CalendarTodayIcon />
+                          </ListItemIcon>
+                          <ListItemText 
+                            primary="Số tuần học" 
+                            secondary={classData?.numberOfWeeks}
+                            primaryTypographyProps={{ fontWeight: 'bold' }}
+                          />
+                        </ListItem>
+                        <ListItem sx={{ py: 1.5 }}>
+                          <ListItemIcon sx={{ color: theme.palette.primary.main }}>
+                            <PersonIcon />
+                          </ListItemIcon>
+                          <ListItemText 
+                            primary="Giáo viên" 
+                            secondary={classData?.teacherName || 'Chưa có thông tin'}
+                            primaryTypographyProps={{ fontWeight: 'bold' }}
+                          />
+                        </ListItem>
+                        <ListItem sx={{ py: 1.5 }}>
+                          <ListItemIcon sx={{ color: theme.palette.primary.main }}>
+                            <GroupIcon />
+                          </ListItemIcon>
+                          <ListItemText 
+                            primary="Tổng số học sinh" 
+                            secondary={classData?.totalStudents || 0}
+                            primaryTypographyProps={{ fontWeight: 'bold' }}
+                          />
+                        </ListItem>
+                      </List>
+                    </CardContent>
+                  </Card>
+                </Zoom>
+              </Grid>
+
+              {/* Lịch học */}
+              <Grid item xs={12} md={6}>
+                <Zoom in={true} style={{ transitionDelay: '200ms' }}>
+                  <Card sx={{
+                    height: '100%',
+                    borderRadius: 2,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 12px 24px rgba(0,0,0,0.1)'
+                    }
+                  }}>
+                    <CardHeader 
+                      title="Lịch học"
+                      sx={{
+                        background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                        color: 'white',
+                        borderRadius: '8px 8px 0 0'
+                      }}
+                    />
+                    <CardContent>
+                      {classData?.schedule && Object.keys(classData.schedule).length > 0 ? (
+                        <List>
+                          {Object.entries(classData.schedule).map(([day, times], index) => (
+                            <motion.div
+                              key={day}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: index * 0.1 }}
+                            >
+                              <ListItem sx={{ 
+                                py: 1.5,
+                                '&:hover': {
+                                  backgroundColor: 'rgba(33, 150, 243, 0.04)',
+                                  borderRadius: 1
+                                }
+                              }}>
+                                <ListItemIcon sx={{ color: theme.palette.primary.main }}>
+                                  <ScheduleIcon />
+                                </ListItemIcon>
+                                <ListItemText
+                                  primary={dayTranslations[day] || day}
+                                  secondary={`${formatTime(times.startTime)} - ${formatTime(times.endTime)}`}
+                                  primaryTypographyProps={{ fontWeight: 'bold' }}
+                                />
+                              </ListItem>
+                            </motion.div>
+                          ))}
+                        </List>
+                      ) : (
+                        <Typography 
+                          variant="body2" 
+                          color="textSecondary"
+                          sx={{ 
+                            textAlign: 'center',
+                            py: 2,
+                            fontStyle: 'italic'
+                          }}
+                        >
+                          Chưa có thông tin lịch học
+                        </Typography>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Zoom>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Fade>
+
+        {/* Footer */}
+        <Box
+          component="footer"
+          sx={{
+            mt: 8,
+            py: 3,
+            px: 2,
+            backgroundColor: 'transparent',
+            borderTop: '1px solid',
+            borderColor: 'divider',
+            textAlign: 'center',
+          }}
+        >
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
+              fontWeight: 500,
+            }}
+          >
+            <span>© {new Date().getFullYear()}</span>
+            <Box
+              component="span"
+              sx={{
+                background: gradientBg,
+                backgroundClip: 'text',
+                textFillColor: 'transparent',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontWeight: 700,
+              }}
+            >
+              PBL5 - Auto Attendance System
+            </Box>
           </Typography>
-          <Chip
-            label={classData?.active ? 'Đang hoạt động' : 'Đã kết thúc'}
-            color={classData?.active ? 'success' : 'error'}
-          />
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{
+              display: 'block',
+              mt: 1,
+              opacity: 0.8,
+            }}
+          >
+            Hệ thống điểm danh tự động thông minh
+          </Typography>
         </Box>
-
-        <Divider sx={{ mb: 3 }} />
-
-        <Grid container spacing={3}>
-          {/* Thông tin chung */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardHeader title="Thông tin chung" />
-              <CardContent>
-                <List>
-                  <ListItem>
-                    <ListItemIcon>
-                      <DateRangeIcon />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Ngày tạo" 
-                      secondary={formatDate(classData?.createdAt)} 
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <CalendarTodayIcon />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Số tuần học" 
-                      secondary={classData?.weeks || 15} 
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <PersonIcon />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Giáo viên" 
-                      secondary={classData?.teacher?.name || 'Chưa có thông tin'} 
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <GroupIcon />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Tổng số học sinh" 
-                      secondary={classData?.studentCount || 0} 
-                    />
-                  </ListItem>
-                </List>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Lịch học */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardHeader title="Lịch học" />
-              <CardContent>
-                {classData?.schedule && classData.schedule.length > 0 ? (
-                  <List>
-                    {classData.schedule.map((sch, index) => (
-                      <ListItem key={index}>
-                        <ListItemIcon>
-                          <ScheduleIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={dayTranslations[sch.dayOfWeek] || sch.dayOfWeek}
-                          secondary={`${formatTime(sch.startTime)} - ${formatTime(sch.endTime)}`}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                ) : (
-                  <Typography variant="body2" color="textSecondary">
-                    Chưa có thông tin lịch học
-                  </Typography>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Mô tả lớp học */}
-          <Grid item xs={12}>
-            <Card>
-              <CardHeader title="Mô tả lớp học" />
-              <CardContent>
-                <Typography variant="body1">
-                  {classData?.description || 'Không có mô tả'}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Paper>
-    </Container>
+      </Container>
+    </Box>
   );
 }
 

@@ -131,12 +131,7 @@ export default function AccountMenu() {
           Tài khoản của tôi
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Cài đặt
-        </MenuItem>
+
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />

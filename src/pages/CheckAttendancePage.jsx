@@ -1,146 +1,239 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Box, Paper, Grid, Card, CardContent, CardMedia } from '@mui/material';
+import api from "../api/axios";
+import { useParams } from 'react-router-dom';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { useTheme } from '@mui/material/styles';
 
 const CheckAttendancePage = () => {
-
-    const [student, setStudent] = useState()
-    const [AttendanceResult, setAttendanceResult] = useState()
-    const [TimeResult, setTimeResult] = useState()
+    const { classId } = useParams();
+    const [student, setStudent] = useState(null);
+    const [attendanceResult, setAttendanceResult] = useState(null);
+    const [timeResult, setTimeResult] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const theme = useTheme();
+    const gradientBg = `linear-gradient(135deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`;
 
     useEffect(() => {
-        const handleInfo = async() => {
+        const fetchStudentInfo = async () => {
             try {
-                // Chuyển từ fetch sang axios
                 const response = await api.get("/api/student", {
                     withCredentials: true
                 });
-                
-                console.log(JSON.stringify(response.data));
-                console.log(response.data.result);
                 setStudent(response.data.result);
             } catch (error) {
-                console.error('Không thể lấy dữ liệu sinh viên:', error);
+                setError('Không thể lấy dữ liệu sinh viên');
+                console.error('Error fetching student data:', error);
             }
         };
-        handleInfo();
+
+        fetchStudentInfo();
     }, []);
 
     useEffect(() => {
-        const pathParts = location.pathname.split('/');
-        const lessionId = pathParts[pathParts.length - 1];
-        
-        const handleAttendanceResult = async () => {
+        const fetchAttendanceResult = async () => {
+            if (!classId) return;
+
             try {
-                // Chuyển từ fetch sang axios
-                const response = await api.get(`/api/attendance/result/${lessionId}`, {
+                const response = await api.get(`/api/attendance/result/${classId}`, {
                     withCredentials: true
                 });
                 
-                const data = response.data;
-                console.log(JSON.stringify(data));
-                console.log(data.result);
-                setAttendanceResult(data.result);
-                
-                if (data.result) {
-                    const checkin = data.result.checkinDate;
-                    console.log(checkin);
-                    if (checkin) {
-                        const dayOnly = checkin.split("T")[0];
-                        var timeOnly = checkin.split("T")[1];
-                        const [hour, minute] = timeOnly.split(":");
-                        timeOnly = `${hour}:${minute}`;
-                        const tr = {
-                            dayOnly: dayOnly,
-                            timeOnly: timeOnly
-                        };
-                        console.log(tr);
-                        setTimeResult(tr);
-                    }
+                const { result } = response.data;
+                setAttendanceResult(result);
+                if (result?.checkinDate) {
+                    const date = new Date(result.checkinDate);
+                    setTimeResult({
+                        dayOnly: date.toLocaleDateString(),
+                        timeOnly: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    });
                 }
             } catch (error) {
-                console.error('Không thể lấy dữ liệu điểm danh:', error);
+                setError('Không thể lấy dữ liệu điểm danh');
+                console.error('Error fetching attendance data:', error);
+            } finally {
+                setLoading(false);
             }
         };
         
-        handleAttendanceResult();
-    }, [location.pathname]);
+        fetchAttendanceResult();
+    }, [classId]);
 
-    if (!student||!AttendanceResult||!TimeResult) {
-        return <div>...Loading...Không có thông tin điểm danh</div>; 
+    if (loading) {
+        return (
+            <Box sx={{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)'
+            }}>
+                <Typography variant="h5" color="primary">Đang tải...</Typography>
+            </Box>
+        );
     }
-   
+
+    if (error) {
+        return (
+            <Box sx={{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)'
+            }}>
+                <Typography variant="h5" color="error">{error}</Typography>
+            </Box>
+        );
+    }
 
     return (
-        <Container maxWidth="lg" sx={{ paddingTop: 5 }}>
-        {/* Header */}
-        <Typography variant="h3" align="center" gutterBottom>
-            Attendance Result
-        </Typography>
+        <Box sx={{
+            minHeight: '100vh',
+            background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)',
+            py: 6
+        }}>
+            <Container maxWidth="sm">
+                <Paper elevation={4} sx={{
+                    p: 4,
+                    borderRadius: 3,
+                    background: 'rgba(255,255,255,0.95)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.10)',
+                    backdropFilter: 'blur(8px)',
+                    mb: 6
+                }}>
+                    <Typography
+                        variant="h3"
+                        align="center"
+                        gutterBottom
+                        sx={{
+                            fontWeight: 800,
+                            background: 'linear-gradient(90deg, #2196F3 30%, #21CBF3 90%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            mb: 3
+                        }}
+                    >
+                        Kết Quả Điểm Danh
+                    </Typography>
 
-        <Grid container spacing={4}>
-            {/* Student Info */}
-            <Grid item xs={12} >
-            <Card elevation={3}>
-                <CardContent  content>
-                <Typography variant="h5" gutterBottom>
-                    Infomation
-                </Typography>
-                <CardMedia
-                    component="img"
-                    image={`http://localhost:5000/student_images/${AttendanceResult.imgPath}`}
-                    alt="Kết Quả Nhận Diện"
-                    sx={{ height: 200, objectFit: 'cover', borderRadius: 2, marginTop: 2 }}
-                />
-                <Typography variant="body1" color="textSecondary">
-                    <strong>Name:</strong> {student.name}
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                    <strong>Id:</strong> {student.id}
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                    <strong>Date:</strong> {TimeResult.dayOnly}
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                    <strong>Time:</strong> {TimeResult.timeOnly}
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                    <strong>Status:</strong> Đã Điểm Danh thành công
-                </Typography>
-                </CardContent>
-            </Card>
-            </Grid>
+                    <Card elevation={0} sx={{
+                        borderRadius: 2,
+                        background: 'rgba(245,247,250,0.7)',
+                        boxShadow: '0 2px 8px rgba(33,150,243,0.07)',
+                        mb: 2
+                    }}>
+                        <CardContent>
+                            <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
+                                Thông Tin Sinh Viên
+                            </Typography>
+                            {attendanceResult?.status !== "Absent" && attendanceResult?.status !== null && (
+                                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                                    <CardMedia
+                                        component="img"
+                                        image={attendanceResult.imgPath ? `http://localhost:5000/student_images/${attendanceResult.imgPath}` : ''}
+                                        alt="Recognition Result"
+                                        sx={{
+                                            width: 180,
+                                            height: 180,
+                                            objectFit: 'cover',
+                                            borderRadius: '50%',
+                                            border: '4px solid',
+                                            borderColor: 'primary.main',
+                                            boxShadow: '0 4px 16px rgba(33,150,243,0.10)'
+                                        }}
+                                    />
+                                </Box>
+                            )}
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="body1" color="textSecondary" sx={{ mb: 1 }}>
+                                    <strong>Họ tên:</strong> {student?.name}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary" sx={{ mb: 1 }}>
+                                    <strong>Mã số sinh viên:</strong> {student?.id}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary" sx={{ mb: 1 }}>
+                                    <strong>Ngày điểm danh:</strong> {timeResult?.dayOnly || 'Chưa điểm danh'}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary" sx={{ mb: 1 }}>
+                                    <strong>Giờ điểm danh:</strong> {timeResult?.timeOnly || 'Chưa điểm danh'}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <strong>Trạng thái:</strong> {attendanceResult?.status === 'Present' ? (
+                                        <span style={{ color: theme.palette.success.main, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                            <CheckCircleIcon fontSize="small" /> Có mặt
+                                        </span>
+                                    ) : attendanceResult?.status === 'Absent' ? (
+                                        <span style={{ color: theme.palette.error.main, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                            <CancelIcon fontSize="small" /> Vắng mặt
+                                        </span>
+                                    ) : (
+                                        <span style={{ color: theme.palette.info.main }}>
+                                            Lớp học đang diễn ra, hãy điểm danh!
+                                        </span>
+                                    )}
+                                </Typography>
+                            </Box>
+                        </CardContent>
+                    </Card>
+                </Paper>
 
-            {/* Face Recognition */}
-            <Grid item xs={12} sm={6}>
-            <Card elevation={3}>
-                <CardContent>
-                <Typography variant="h5" gutterBottom>
-                    Face Recognize Result
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                    <strong>Trạng Thái:</strong> Success
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                    <strong>Độ Chính Xác:</strong> 98%
-                </Typography>
-                <CardMedia
-                    component="img"
-                    image={`http://localhost:5000/student_images/${AttendanceResult.imgPath}`}
-                    alt="Kết Quả Nhận Diện"
-                    sx={{ height: 200, objectFit: 'cover', borderRadius: 2, marginTop: 2 }}
-                />
-                </CardContent>
-            </Card>
-            </Grid>
-        </Grid>
-
-        {/* Footer */}
-        <Box sx={{ textAlign: 'center', marginTop: 5, padding: 2, backgroundColor: '#f1f1f1' }}>
-            <Typography variant="body2" color="textSecondary">
-                Auto Attendance System
-            </Typography>
+                {/* Footer */}
+                <Box
+                    component="footer"
+                    sx={{
+                        mt: 8,
+                        py: 3,
+                        px: 2,
+                        backgroundColor: 'transparent',
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                        textAlign: 'center',
+                    }}
+                >
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 1,
+                            fontWeight: 500,
+                        }}
+                    >
+                        <span>© {new Date().getFullYear()}</span>
+                        <Box
+                            component="span"
+                            sx={{
+                                background: gradientBg,
+                                backgroundClip: 'text',
+                                textFillColor: 'transparent',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                fontWeight: 700,
+                            }}
+                        >
+                            PBL5 - Auto Attendance System
+                        </Box>
+                    </Typography>
+                    <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{
+                            display: 'block',
+                            mt: 1,
+                            opacity: 0.8,
+                        }}
+                    >
+                        Hệ thống điểm danh tự động thông minh
+                    </Typography>
+                </Box>
+            </Container>
         </Box>
-        </Container>
     );
 }
 

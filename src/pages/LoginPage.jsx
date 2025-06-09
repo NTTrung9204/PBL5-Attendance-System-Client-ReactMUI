@@ -57,7 +57,9 @@ function LoginPage() {
 
             // Lưu roles vào localStorage
             localStorage.setItem("roles", data.roles);
-
+            if (data.roles.includes('ROLE_STUDENT')) {
+                localStorage.setItem('pendingFaceRegistration', username);
+            }
             // Lưu token vào localStorage nếu API trả về token
             if (data.token) {
                 localStorage.setItem("token", data.token);
@@ -94,6 +96,7 @@ function LoginPage() {
         setShowPassword(!showPassword);
     };
 
+   
     return (
         <Box
             sx={{
@@ -168,6 +171,7 @@ function LoginPage() {
                                     '& .MuiAlert-icon': {
                                         alignItems: 'center'
                                     }
+                                    
                                 }}
                             >
                                 {error}
@@ -236,7 +240,7 @@ function LoginPage() {
                                 sx={{
                                     mb: 1,
                                     '& .MuiOutlinedInput-root': {
-                                        borderRadius: 1.5
+                                        borderRadius: 1.6
                                     }
                                 }}
                             />

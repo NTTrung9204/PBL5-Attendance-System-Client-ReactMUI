@@ -19,15 +19,6 @@ function SideBarClass() {
     };
 
     const handleLogout = async () => {
-        // try {
-        //     await fetch('https://192.168.1.10:8080/signout', {
-        //         method: 'POST',
-        //         credentials: 'include'
-        //     });
-        //     navigate('/');
-        // } catch (error) {
-        //     console.error('Lỗi đăng xuất:', error);
-        // }
         handleClose();
     };
 

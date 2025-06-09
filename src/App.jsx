@@ -65,19 +65,20 @@ function App() {
                       width: '100%',
                       bgcolor: 'background.default',
                       padding: 0,
-                      overflow: "hidden !important",
+                      overflow: "auto !important",
                     }}
                   >
                     <Routes>
                       <Route path="/" element={<Navigate to="/groups" replace />} />
                       <Route path="/groups" element={<GroupsRouter />} />
+                      <Route path="/student/face-registration" element={<FaceRegistrationPage />} />
                       <Route path="/assignment" element={<AssignmentPage />} />
                       <Route path="/activities/*" element={<Activity />} />
                       <Route path="/chats/*" element={<Chat />} />
                       <Route path="/class/:id" element={<ClassPage />} />
-                      <Route path="/calendar/*" element={<CalendarPage />} />
-                      <Route path="/calendar/attendance/*" element={<AttendancePage />} />
-                      <Route path="/calendar/attendance/check/*" element={<CheckAttendancePage />} />
+                      <Route path="/calendar/:classId" element={<CalendarPage />} />
+                      <Route path="/calendar/attendance/:classId" element={<AttendancePage />} />
+                      <Route path="/calendar/attendance/check/:classId" element={<CheckAttendancePage />} />
                       <Route path="/profile" element={<AccountProfilePage />} />
                     </Routes>
                   </Box>
